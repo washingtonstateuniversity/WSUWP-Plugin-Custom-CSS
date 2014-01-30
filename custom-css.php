@@ -11,43 +11,40 @@ Version: 1.6
  * A Jetpack fork.
  */
 class Jetpack_Custom_CSS {
+
 	static function init() {
-		add_action( 'switch_theme', array( __CLASS__, 'reset' ) );
-		add_action( 'wp_restore_post_revision', array( __CLASS__, 'restore_revision' ), 10, 2 );
+
+		add_action( 'switch_theme',             array( __CLASS__, 'reset'              )        );
+		add_action( 'wp_restore_post_revision', array( __CLASS__, 'restore_revision'   ), 10, 2 );
 
 		// Save revisions for posts of type safecss.
-		add_filter( 'revision_redirect', array( __CLASS__, 'revision_redirect' ) );
+		add_filter( 'revision_redirect',        array( __CLASS__, 'revision_redirect'  )        );
 
 		// Override the edit link, the default link causes a redirect loop
-		add_filter( 'get_edit_post_link', array( __CLASS__, 'revision_post_link' ), 10, 3 );
+		add_filter( 'get_edit_post_link',       array( __CLASS__, 'revision_post_link' ), 10, 3 );
 
-		if ( ! is_admin() )
+		if ( ! is_admin() ) {
 			add_filter( 'stylesheet_uri', array( __CLASS__, 'style_filter' ) );
+		}
 
 		define( 'SAFECSS_USE_ACE', apply_filters( 'safecss_use_ace', true ) );
 
-	  	// Register safecss as a custom post_type
-	  	// Explicit capability definitions are largely unnecessary because the posts are manipulated in code via an options page, managing CSS revisions does check the capabilities, so let's ensure that the proper caps are checked.
-	  	register_post_type( 'safecss', array(
-	//		These are the defaults
-	//		'exclude_from_search' => true,
-	//		'public' => false,
-	//		'publicly_queryable' => false,
-	//		'show_ui' => false,
-	  		'supports' => array( 'revisions' ),
-	  		'label' => 'Custom CSS',
-	  		'can_export' => false,
-	  		'rewrite' => false,
-	  		'capabilities' => array(
-	  			'edit_post' => 'edit_theme_options',
-	  			'read_post' => 'read',
-	  			'delete_post' => 'edit_theme_options',
-	  			'edit_posts' => 'edit_theme_options',
-	  			'edit_others_posts' => 'edit_theme_options',
-	  			'publish_posts' => 'edit_theme_options',
-	  			'read_private_posts' => 'read'
-	  		)
-	  	) );
+		$args = array(
+			'supports'     => array( 'revisions' ),
+			'label'        => 'Custom CSS',
+			'can_export'   => false,
+			'rewrite'      => false,
+			'capabilities' => array(
+				'edit_post'          => 'edit_theme_options',
+				'read_post'          => 'read',
+				'delete_post'        => 'edit_theme_options',
+				'edit_posts'         => 'edit_theme_options',
+				'edit_others_posts'  => 'edit_theme_options',
+				'publish_posts'      => 'edit_theme_options',
+				'read_private_posts' => 'read'
+			),
+		);
+		register_post_type( 'safecss', $args );
 
 		// Short-circuit WP if this is a CSS stylesheet request
 		if ( isset( $_GET['custom-css'] ) ) {
@@ -57,14 +54,13 @@ class Jetpack_Custom_CSS {
 			exit;
 		}
 
-		add_action( 'admin_enqueue_scripts', array( 'Jetpack_Custom_CSS', 'enqueue_scripts' ) );
-
-		add_action( 'wp_head', array( 'Jetpack_Custom_CSS', 'link_tag' ), 101 );
-
+		add_action( 'admin_enqueue_scripts', array( 'Jetpack_Custom_CSS', 'enqueue_scripts'       )        );
+		add_action( 'wp_head',               array( 'Jetpack_Custom_CSS', 'link_tag'              ), 101   );
 		add_filter( 'editor_max_image_size', array( 'Jetpack_Custom_CSS', 'editor_max_image_size' ), 10, 3 );
 
-		if ( !current_user_can( 'switch_themes' ) && !is_super_admin() )
+		if ( !current_user_can( 'switch_themes' ) && !is_super_admin() ) {
 			return;
+		}
 
 		add_action( 'admin_menu', array( 'Jetpack_Custom_CSS', 'menu' ) );
 
@@ -72,11 +68,11 @@ class Jetpack_Custom_CSS {
 			check_admin_referer( 'safecss' );
 
 			$save_result = self::save( array(
-				'css' => stripslashes( $_POST['safecss'] ),
-				'is_preview' => isset( $_POST['action'] ) && $_POST['action'] == 'preview',
-				'preprocessor' => isset( $_POST['custom_css_preprocessor'] ) ? $_POST['custom_css_preprocessor'] : '',
+				'css'             => stripslashes( $_POST['safecss'] ),
+				'is_preview'      => isset( $_POST['action'] ) && $_POST['action'] == 'preview',
+				'preprocessor'    => isset( $_POST['custom_css_preprocessor'] ) ? $_POST['custom_css_preprocessor'] : '',
 				'add_to_existing' => isset( $_POST['add_to_existing'] ) ? $_POST['add_to_existing'] == 'true' : true,
-				'content_width' => isset( $_POST['custom_content_width'] ) ? $_POST['custom_content_width'] : false,
+				'content_width'   => isset( $_POST['custom_content_width'] ) ? $_POST['custom_content_width'] : false,
 			) );
 
 			if ( $_POST['action'] == 'preview' ) {
@@ -84,13 +80,15 @@ class Jetpack_Custom_CSS {
 				exit;
 			}
 
-			if ( $save_result )
+			if ( $save_result ) {
 				add_action( 'admin_notices', array( 'Jetpack_Custom_CSS', 'saved_message' ) );
+			}
 		}
 
 		// Modify all internal links so that preview state persists
-		if ( Jetpack_Custom_CSS::is_preview() )
+		if ( Jetpack_Custom_CSS::is_preview() ) {
 			ob_start( array( 'Jetpack_Custom_CSS', 'buffer' ) );
+		}
 	}
 
 	/**
