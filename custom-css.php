@@ -59,13 +59,6 @@ class Jetpack_Custom_CSS {
 
 		add_action( 'admin_enqueue_scripts', array( 'Jetpack_Custom_CSS', 'enqueue_scripts' ) );
 
-		if ( isset( $_GET['page'] ) && 'editcss' == $_GET['page'] && is_admin() ) {
-			// Do migration routine if necessary
-			Jetpack_Custom_CSS::upgrade();
-
-			do_action( 'safecss_migrate_post' );
-		}
-
 		add_action( 'wp_head', array( 'Jetpack_Custom_CSS', 'link_tag' ), 101 );
 
 		add_filter( 'jetpack_content_width', array( 'Jetpack_Custom_CSS', 'jetpack_content_width' ) );
@@ -1043,86 +1036,6 @@ class Jetpack_Custom_CSS {
 		delete_option( 'safecss_preview_add' );
 	}
 
-	/**
-	 * Migration routine for moving safecss from wp_options to wp_posts to support revisions
-	 *
-	 * @return void
-	 */
-	static function upgrade() {
-		$css = get_option( 'safecss' );
-
-		// Check if CSS is stored in wp_options
-		if ( $css ) {
-			// Remove the async actions from publish_post
-			remove_action( 'publish_post', 'queue_publish_post' );
-
-			$post = array();
-			$post['post_content'] = $css;
-			$post['post_title'] = 'safecss';
-			$post['post_status'] = 'publish';
-			$post['post_type'] = 'safecss';
-
-			// Insert the CSS into wp_posts
-			$post_id = wp_insert_post( $post );
-			// Check for errors
-			if ( !$post_id or is_wp_error( $post_id ) )
-				die( $post_id->get_error_message() );
-
-			// Delete safecss option
-			delete_option( 'safecss' );
-		}
-
-		unset( $css );
-
-		// Check if we have already done this
-		if ( !get_option( 'safecss_revision_migrated' ) ) {
-			define( 'DOING_MIGRATE', true );
-
-			// Get hashes of safecss post and current revision
-			$safecss_post = Jetpack_Custom_CSS::get_post();
-
-			if ( empty( $safecss_post ) )
-				return;
-
-			$safecss_post_hash = md5( $safecss_post['post_content'] );
-			$current_revision = Jetpack_Custom_CSS::get_current_revision();
-
-			if ( null == $current_revision )
-				return;
-
-			$current_revision_hash = md5( $current_revision['post_content'] );
-
-			// If hashes are not equal, set safecss post with content from current revision
-			if ( $safecss_post_hash !== $current_revision_hash ) {
-				Jetpack_Custom_CSS::save_revision( $current_revision['post_content'] );
-				// Reset post_content to display the migrated revsion
-				$safecss_post['post_content'] = $current_revision['post_content'];
-			}
-
-			// Set option so that we dont keep doing this
-			update_option( 'safecss_revision_migrated', time() );
-		}
-
-		$newest_safecss_post = Jetpack_Custom_CSS::get_current_revision();
-
-		if ( $newest_safecss_post ) {
-			if ( get_option( 'safecss_content_width' ) ) {
-				// Add the meta to the post and the latest revision.
-				update_post_meta( $newest_safecss_post['ID'], 'content_width', get_option( 'safecss_content_width' ) );
-				update_metadata( 'post', $newest_safecss_post['ID'], 'content_width', get_option( 'safecss_content_width' ) );
-
-				delete_option( 'safecss_content_width' );
-			}
-
-			if ( get_option( 'safecss_add' ) ) {
-				update_post_meta( $newest_safecss_post['ID'], 'custom_css_add', get_option( 'safecss_add' ) );
-				update_metadata( 'post', $newest_safecss_post['ID'], 'custom_css_add', get_option( 'safecss_add' ) );
-
-				delete_option( 'safecss_add' );
-			}
-		}
-	}
-
 	static function revision_redirect( $redirect ) {
 		global $post;
 
@@ -1227,12 +1140,6 @@ class Jetpack_Safe_CSS {
 
 		return $matches[1];
 	}
-}
-
-function migrate() {
-	_deprecated_function( __FUNCTION__, '2.1', 'Jetpack_Custom_CSS::upgrade()' );
-
-	return Jetpack_Custom_CSS::upgrade();
 }
 
 function safecss_revision_redirect( $redirect ) {
