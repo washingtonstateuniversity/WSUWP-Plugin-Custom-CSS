@@ -2,13 +2,18 @@
 /*
 Plugin Name: WSU Custom CSS
 Plugin URI: http://web.wsu.edu
-Description: Custom CSS functionality for WSUWP.
-Author: washingtonstateuniversity, jeremyfelt
-Version: 1.6
+Description: Custom CSS via custom post type.
+Author: washingtonstateuniversity, jeremyfelt, automattic
+Version: 1.7.1
 */
 
 /**
- * A Jetpack fork.
+ * The following is a fork of the custom CSS module included with Automattic's Jetpack plugin. The
+ * weight of the full plugin was too much for our needs and we need to opt out of sending full
+ * data back to wp.com servers. The custom css module is wonderful and we're happy to be able to
+ * fork it. :)
+ *
+ * Class Jetpack_Custom_CSS
  */
 class Jetpack_Custom_CSS {
 
