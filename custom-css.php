@@ -1,5 +1,15 @@
 <?php
+/*
+Plugin Name: WSU Custom CSS
+Plugin URI: http://web.wsu.edu
+Description: Custom CSS functionality for WSUWP.
+Author: washingtonstateuniversity, jeremyfelt
+Version: 1.6
+*/
 
+/**
+ * A Jetpack fork.
+ */
 class Jetpack_Custom_CSS {
 	static function init() {
 		add_action( 'switch_theme', array( __CLASS__, 'reset' ) );
