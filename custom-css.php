@@ -24,7 +24,7 @@ class Jetpack_Custom_CSS {
 		if ( ! is_admin() )
 			add_filter( 'stylesheet_uri', array( __CLASS__, 'style_filter' ) );
 
-		define( 'SAFECSS_USE_ACE', ! jetpack_is_mobile() && ! Jetpack_User_Agent_Info::is_ipad() && apply_filters( 'safecss_use_ace', true ) );
+		define( 'SAFECSS_USE_ACE', apply_filters( 'safecss_use_ace', true ) );
 
 	  	// Register safecss as a custom post_type
 	  	// Explicit capability definitions are largely unnecessary because the posts are manipulated in code via an options page, managing CSS revisions does check the capabilities, so let's ensure that the proper caps are checked.
@@ -557,7 +557,7 @@ class Jetpack_Custom_CSS {
 		if ( Jetpack_Custom_CSS::is_freetrial() && ( ! Jetpack_Custom_CSS::is_preview() || ! current_user_can( 'switch_themes' ) ) )
 			return $current;
 		else if ( Jetpack_Custom_CSS::skip_stylesheet() )
-			return apply_filters( 'safecss_style_filter_url', plugins_url( 'custom-css/blank.css', __FILE__ ) );
+			return apply_filters( 'safecss_style_filter_url', plugins_url( 'blank.css', __FILE__ ) );
 
 		return $current;
 	}
@@ -653,15 +653,15 @@ class Jetpack_Custom_CSS {
 			return;
 
 		wp_enqueue_script( 'postbox' );
-		wp_enqueue_script( 'custom-css-editor', plugins_url( 'custom-css/js/css-editor.js', __FILE__ ), 'jquery', '20130325', true );
-		wp_enqueue_style( 'custom-css-editor', plugins_url( 'custom-css/css/css-editor.css', __FILE__ ) );
+		wp_enqueue_script( 'custom-css-editor', plugins_url( 'js/css-editor.js', __FILE__ ), 'jquery', '20130325', true );
+		wp_enqueue_style( 'custom-css-editor', plugins_url( 'css/css-editor.css', __FILE__ ) );
 
 		if ( defined( 'SAFECSS_USE_ACE' ) && SAFECSS_USE_ACE ) {
-			wp_register_style( 'jetpack-css-codemirror', plugins_url( 'custom-css/css/codemirror.css', __FILE__ ), array(), '20120905' );
-			wp_enqueue_style( 'jetpack-css-use-codemirror', plugins_url( 'custom-css/css/use-codemirror.css', __FILE__ ), array( 'jetpack-css-codemirror' ), '20120905' );
+			wp_register_style( 'jetpack-css-codemirror', plugins_url( 'css/codemirror.css', __FILE__ ), array(), '20120905' );
+			wp_enqueue_style( 'jetpack-css-use-codemirror', plugins_url( 'css/use-codemirror.css', __FILE__ ), array( 'jetpack-css-codemirror' ), '20120905' );
 
-			wp_register_script( 'jetpack-css-codemirror', plugins_url( 'custom-css/js/codemirror.min.js', __FILE__ ), array(), '3.16', true );
-			wp_enqueue_script( 'jetpack-css-use-codemirror', plugins_url( 'custom-css/js/use-codemirror.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_register_script( 'jetpack-css-codemirror', plugins_url( 'js/codemirror.min.js', __FILE__ ), array(), '3.16', true );
+			wp_enqueue_script( 'jetpack-css-use-codemirror', plugins_url( 'js/use-codemirror.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
 		}
 	}
 
@@ -1465,4 +1465,4 @@ if ( ! function_exists( 'safecss_filter_attr' ) ) {
 
 add_action( 'init', array( 'Jetpack_Custom_CSS', 'init' ) );
 
-include dirname( __FILE__ ) . '/custom-css/preprocessors.php';
+include dirname( __FILE__ ) . '/preprocessors.php';
