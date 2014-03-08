@@ -61,7 +61,6 @@ class Jetpack_Custom_CSS {
 
 		add_action( 'admin_enqueue_scripts', array( 'Jetpack_Custom_CSS', 'enqueue_scripts'       )        );
 		add_action( 'wp_head',               array( 'Jetpack_Custom_CSS', 'link_tag'              ), 101   );
-		add_filter( 'editor_max_image_size', array( 'Jetpack_Custom_CSS', 'editor_max_image_size' ), 10, 3 );
 
 		if ( !current_user_can( 'switch_themes' ) && !is_super_admin() ) {
 			return;
@@ -1074,19 +1073,6 @@ class Jetpack_Custom_CSS {
 		}
 
 		return esc_url_raw( $post_link );
-	}
-
-	/**
-	 * When on the edit screen, make sure the custom content width
-	 * setting is applied to the large image size.
-	 */
-	static function editor_max_image_size( $dims, $size = 'medium', $context = null ) {
-		list( $width, $height ) = $dims;
-
-		if ( 'large' == $size && 'edit' == $context )
-			$width = Jetpack::get_content_width();
-
-		return array( $width, $height );
 	}
 
 	/**
