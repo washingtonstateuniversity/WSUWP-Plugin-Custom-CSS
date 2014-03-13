@@ -13,6 +13,8 @@ Version: 1.7.1
  * data back to wp.com servers. The custom css module is wonderful and we're happy to be able to
  * fork it. :)
  *
+ * Our fork, like Jetpack itself is licensed as GPLv2+ http://www.gnu.org/licenses/gpl-2.0.html
+ *
  * Class Jetpack_Custom_CSS
  */
 class Jetpack_Custom_CSS {
