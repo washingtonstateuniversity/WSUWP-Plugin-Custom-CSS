@@ -728,11 +728,7 @@ class Jetpack_Custom_CSS {
 				<?php
 
 				if ( !empty( $GLOBALS['content_width'] ) && $custom_content_width != $GLOBALS['content_width'] ) {
-					if ( function_exists( 'wp_get_theme' ) )
-						$current_theme = wp_get_theme()->Name;
-					else
-						$current_theme = get_current_theme();
-
+					$current_theme = wp_get_theme()->Name;
 					?>
 					<p><?php printf( __( 'The default content width for the %s theme is %d pixels.', 'jetpack' ), $current_theme, intval( $GLOBALS['content_width'] ) ); ?></p>
 					<?php
