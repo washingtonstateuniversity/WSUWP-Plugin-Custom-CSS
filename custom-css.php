@@ -425,7 +425,8 @@ class Jetpack_Custom_CSS {
 		$option = ( Jetpack_Custom_CSS::is_preview() || Jetpack_Custom_CSS::is_freetrial() ) ? 'safecss_preview' : 'safecss';
 
 		if ( 'safecss' == $option ) {
-			if ( get_option( 'safecss_revision_migrated' ) ) {
+			// Don't bother checking for a migrated 'safecss' option if it never existed
+			if ( false === get_option( 'safecss' ) || get_option( 'safecss_revision_migrated' ) ) {
 				$safecss_post = Jetpack_Custom_CSS::get_post();
 				$css = ( $compressed && $safecss_post['post_content_filtered'] ) ? $safecss_post['post_content_filtered'] : $safecss_post['post_content'];
 			} else {
@@ -585,12 +586,13 @@ class Jetpack_Custom_CSS {
 
 		$preview_flag_js = "var flag = document.createElement('div');
 	flag.innerHTML = " . json_encode( $message ) . ";
-	flag.style.background = 'black';
+	flag.style.background = '#FF6600';
 	flag.style.color = 'white';
 	flag.style.textAlign = 'center';
 	flag.style.fontSize = '15px';
-	flag.style.padding = '1px';
-	document.body.style.paddingTop = '32px';
+	flag.style.padding = '2px';
+	flag.style.fontFamily = 'sans-serif';
+	document.body.style.paddingTop = '0px';
 	document.body.insertBefore(flag, document.body.childNodes[0]);
 	";
 
@@ -674,7 +676,7 @@ class Jetpack_Custom_CSS {
 		if ( ! empty( $safecss_post ) && 0 < $safecss_post['ID'] && wp_get_post_revisions( $safecss_post['ID'] ) )
 			add_meta_box( 'revisionsdiv', __( 'CSS Revisions', 'jetpack' ), array( __CLASS__, 'revisions_meta_box' ), 'editcss', 'side' );
 		?>
-		<div class="wrap columns-2">
+		<div class="wrap">
 			<?php do_action( 'custom_design_header' ); ?>
 			<h2><?php _e( 'CSS Stylesheet Editor', 'jetpack' ); ?></h2>
 			<form id="safecssform" action="" method="post">
@@ -682,18 +684,18 @@ class Jetpack_Custom_CSS {
 				<?php wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
 				<?php wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false ); ?>
 				<input type="hidden" name="action" value="save" />
-				<div id="poststuff" class="metabox-holder has-right-sidebar">
+				<div id="poststuff">
 					<p class="css-support"><?php echo apply_filters( 'safecss_intro_text', __( 'New to CSS? Start with a <a href="http://www.htmldog.com/guides/cssbeginner/">beginner tutorial</a>. Questions?
 		Ask in the <a href="http://wordpress.org/support/forum/themes-and-templates">Themes and Templates forum</a>.', 'jetpack' ) ); ?></p>
-					<div id="postbox-container-1" class="inner-sidebar">
-						<?php do_meta_boxes( 'editcss', 'side', $safecss_post ); ?>
-					</div>
-					<div id="post-body">
+					<div id="post-body" class="metabox-holder columns-2">
 						<div id="post-body-content">
 							<div class="postarea">
 								<textarea id="safecss" name="safecss"<?php if ( SAFECSS_USE_ACE ) echo ' class="hide-if-js"'; ?>><?php echo esc_textarea( Jetpack_Custom_CSS::get_css() ); ?></textarea>
 								<div class="clear"></div>
 							</div>
+						</div>
+						<div id="postbox-container-1" class="inner-sidebar">
+							<?php do_meta_boxes( 'editcss', 'side', $safecss_post ); ?>
 						</div>
 					</div>
 					<br class="clear" />
