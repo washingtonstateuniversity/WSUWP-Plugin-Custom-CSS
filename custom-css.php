@@ -187,7 +187,7 @@ class Jetpack_Custom_CSS {
 		else
 			$add_to_existing = 'no';
 
-		if ( $args['is_preview'] || Jetpack_Custom_CSS::is_freetrial() ) {
+		if ( $args['is_preview'] ) {
 			// Save the CSS
 			$safecss_revision_id = Jetpack_Custom_CSS::save_revision( $css, true, $args['preprocessor'] );
 
@@ -412,21 +412,13 @@ class Jetpack_Custom_CSS {
 		return isset( $_GET['csspreview'] ) && $_GET['csspreview'] === 'true';
 	}
 
-	/*
-	 * False when the site has the Custom Design upgrade.
-	 * Used only on WordPress.com.
-	 */
-	static function is_freetrial() {
-		return apply_filters( 'safecss_is_freetrial', false );
-	}
-
 	static function get_css( $compressed = false ) {
 		$default_css = apply_filters( 'safecss_get_css_error', false );
 
 		if ( $default_css !== false )
 			return $default_css;
 
-		$option = ( Jetpack_Custom_CSS::is_preview() || Jetpack_Custom_CSS::is_freetrial() ) ? 'safecss_preview' : 'safecss';
+		$option = ( Jetpack_Custom_CSS::is_preview() ) ? 'safecss_preview' : 'safecss';
 
 		if ( 'safecss' == $option ) {
 			// Don't bother checking for a migrated 'safecss' option if it never existed
@@ -555,7 +547,7 @@ class Jetpack_Custom_CSS {
 	}
 
 	static function style_filter( $current ) {
-		if ( Jetpack_Custom_CSS::is_freetrial() && ( ! Jetpack_Custom_CSS::is_preview() || ! current_user_can( 'switch_themes' ) ) )
+		if ( ! Jetpack_Custom_CSS::is_preview() || ! current_user_can( 'switch_themes' ) )
 			return $current;
 		else if ( Jetpack_Custom_CSS::skip_stylesheet() )
 			return apply_filters( 'safecss_style_filter_url', plugins_url( 'blank.css', __FILE__ ) );
@@ -877,7 +869,7 @@ class Jetpack_Custom_CSS {
 		<div id="major-publishing-actions">
 			<input type="button" class="button" id="preview" name="preview" value="<?php esc_attr_e( 'Preview', 'jetpack' ) ?>" />
 			<div id="publishing-action">
-				<input type="submit" class="button-primary" id="save" name="save" value="<?php ( Jetpack_Custom_CSS::is_freetrial() ) ? esc_attr_e( 'Save &amp; Buy Upgrade', 'jetpack' ) : esc_attr_e( 'Save Stylesheet', 'jetpack' ); ?>" />
+				<input type="submit" class="button-primary" id="save" name="save" value="<?php esc_attr_e( 'Save Stylesheet', 'jetpack' ); ?>" />
 			</div>
 		</div>
 		<?php
@@ -1092,7 +1084,7 @@ class Jetpack_Custom_CSS {
 		if ( Jetpack_Custom_CSS::is_preview() ) {
 			$safecss_post = Jetpack_Custom_CSS::get_current_revision();
 			$custom_content_width = intval( get_post_meta( $safecss_post['ID'], 'content_width', true ) );
-		} else if ( ! Jetpack_Custom_CSS::is_freetrial() ) {
+		} else {
 			$custom_css_post_id = Jetpack_Custom_CSS::post_id();
 			if ( $custom_css_post_id )
 				$custom_content_width = intval( get_post_meta( $custom_css_post_id, 'content_width', true ) );
