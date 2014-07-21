@@ -122,10 +122,11 @@ class Jetpack_Custom_CSS {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( $args['content_width'] && intval( $args['content_width']) > 0 && ( ! isset( $GLOBALS['content_width'] ) || $args['content_width'] != $GLOBALS['content_width'] ) )
+		if ( $args['content_width'] && intval( $args['content_width']) > 0 && ( ! isset( $GLOBALS['content_width'] ) || $args['content_width'] != $GLOBALS['content_width'] ) ) {
 			$args['content_width'] = intval( $args['content_width'] );
-		else
+		} else {
 			$args['content_width'] = false;
+		}
 
 		// Remove wp_filter_post_kses, this causes CSS escaping issues
 		remove_filter( 'content_save_pre', 'wp_filter_post_kses' );
@@ -155,8 +156,9 @@ class Jetpack_Custom_CSS {
 
 		$css = preg_replace( '/\\\\([0-9a-fA-F]{4})/', '\\\\\\\\$1', $prev = $css );
 
-		if ( $css != $prev )
+		if ( $css != $prev ) {
 			$warnings[] = 'preg_replace found stuff';
+		}
 
 		// Some people put weird stuff in their CSS, KSES tends to be greedy
 		$css = str_replace( '<=', '&lt;=', $css );
@@ -166,8 +168,9 @@ class Jetpack_Custom_CSS {
 		// Why both KSES and strip_tags?  Because we just added some '>'.
 		$css = strip_tags( $css );
 
-		if ( $css != $prev )
+		if ( $css != $prev ) {
 			$warnings[] = 'kses found stuff';
+		}
 
 		// if we're not using a preprocessor
 		if ( ! $args['preprocessor'] ) {
@@ -180,10 +183,11 @@ class Jetpack_Custom_CSS {
 			$css = $csstidy->print->plain();
 		}
 
-		if ( $args['add_to_existing'] )
+		if ( $args['add_to_existing'] ) {
 			$add_to_existing = 'yes';
-		else
+		} else {
 			$add_to_existing = 'no';
+		}
 
 		if ( $args['is_preview'] ) {
 			// Save the CSS
@@ -238,8 +242,9 @@ class Jetpack_Custom_CSS {
 	static function get_post() {
 		$custom_css_post_id = Jetpack_Custom_CSS::post_id();
 
-		if ( $custom_css_post_id )
+		if ( $custom_css_post_id ) {
 			return get_post( $custom_css_post_id, ARRAY_A );
+		}
 
 		return array();
 	}
@@ -261,17 +266,19 @@ class Jetpack_Custom_CSS {
 				'order' => 'DESC'
 			) );
 
-			if ( count( $custom_css_posts ) > 0 )
+			if ( count( $custom_css_posts ) > 0 ) {
 				$custom_css_post_id = $custom_css_posts[0]->ID;
-			else
+			} else {
 				$custom_css_post_id = 0;
+			}
 
 			// Save post_id=0 to note that no safecss post exists.
 			wp_cache_set( 'custom_css_post_id', $custom_css_post_id );
 		}
 
-		if ( ! $custom_css_post_id )
+		if ( ! $custom_css_post_id ) {
 			return false;
+		}
 
 		return $custom_css_post_id;
 	}
@@ -318,8 +325,9 @@ class Jetpack_Custom_CSS {
 
 		// If null, there was no original safecss record, so create one
 		if ( null == $safecss_post ) {
-			if ( ! $css )
+			if ( ! $css ) {
 				return false;
+			}
 
 			$post = array();
 			$post['post_content'] = $css;
@@ -357,8 +365,7 @@ class Jetpack_Custom_CSS {
 			$post_id = wp_update_post( $safecss_post );
 			wp_cache_set( 'custom_css_post_id', $post_id );
 			return $post_id;
-		}
-		else if ( ! defined( 'DOING_MIGRATE' ) ) {
+		} else if ( ! defined( 'DOING_MIGRATE' ) ) {
 			return _wp_put_post_revision( $safecss_post );
 		}
 	}
@@ -374,12 +381,12 @@ class Jetpack_Custom_CSS {
 			if ( Jetpack_Custom_CSS::is_preview() ) {
 				$safecss_post = Jetpack_Custom_CSS::get_current_revision();
 
-				if ( $safecss_post )
+				if ( $safecss_post ) {
 					return (bool) ( get_post_meta( $safecss_post['ID'], 'custom_css_add', true ) == 'no' );
-				else
+				} else {
 					return (bool) ( get_option( 'safecss_preview_add' ) == 'no' );
-			}
-			else {
+				}
+			} else {
 				$custom_css_post_id = Jetpack_Custom_CSS::post_id();
 
 				if ( $custom_css_post_id ) {
@@ -388,8 +395,9 @@ class Jetpack_Custom_CSS {
 					// It is possible for the CSS to be stored in a post but for the safecss_add option
 					// to have not been upgraded yet if the user hasn't opened their Custom CSS editor
 					// since October 2012.
-					if ( ! empty( $custom_css_add ) )
+					if ( ! empty( $custom_css_add ) ) {
 						return (bool) ( $custom_css_add === 'no' );
+					}
 				}
 
 				return (bool) ( get_option( 'safecss_add' ) == 'no' );
@@ -404,8 +412,9 @@ class Jetpack_Custom_CSS {
 	static function get_css( $compressed = false ) {
 		$default_css = apply_filters( 'safecss_get_css_error', false );
 
-		if ( $default_css !== false )
+		if ( $default_css !== false ) {
 			return $default_css;
+		}
 
 		$option = ( Jetpack_Custom_CSS::is_preview() ) ? 'safecss_preview' : 'safecss';
 
@@ -468,14 +477,17 @@ class Jetpack_Custom_CSS {
 	static function link_tag() {
 		global $blog_id, $current_blog;
 
-		if ( apply_filters( 'safecss_style_error', false ) )
+		if ( apply_filters( 'safecss_style_error', false ) ) {
 			return;
+		}
 
-		if ( ! is_super_admin() && isset( $current_blog ) && ( 1 == $current_blog->spam || 1 == $current_blog->deleted ) )
+		if ( ! is_super_admin() && isset( $current_blog ) && ( 1 == $current_blog->spam || 1 == $current_blog->deleted ) ) {
 			return;
+		}
 
-		if ( Jetpack_Custom_CSS::is_customizer_preview() )
+		if ( Jetpack_Custom_CSS::is_customizer_preview() ) {
 			return;
+		}
 
 		$css    = '';
 		$option = Jetpack_Custom_CSS::is_preview() ? 'safecss_preview' : 'safecss';
@@ -514,8 +526,9 @@ class Jetpack_Custom_CSS {
 
 		$css = str_replace( array( '\\\00BB \\\0020', '\0BB \020', '0BB 020' ), '\00BB \0020', $css );
 
-		if ( $css == '' )
+		if ( $css == '' ) {
 			return;
+		}
 
 		$href = home_url( '/' );
 		$href = add_query_arg( 'custom-css', 1, $href );
@@ -525,9 +538,9 @@ class Jetpack_Custom_CSS {
 
 		$href = apply_filters( 'safecss_href', $href, $blog_id );
 
-		if ( Jetpack_Custom_CSS::is_preview() )
+		if ( Jetpack_Custom_CSS::is_preview() ) {
 			$href = add_query_arg( 'csspreview', 'true', $href );
-
+		}
 		?>
 		<link rel="stylesheet" id="custom-css-css" type="text/css" href="<?php echo esc_url( $href ); ?>" />
 		<?php
@@ -536,10 +549,11 @@ class Jetpack_Custom_CSS {
 	}
 
 	static function style_filter( $current ) {
-		if ( ! Jetpack_Custom_CSS::is_preview() || ! current_user_can( 'switch_themes' ) )
+		if ( ! Jetpack_Custom_CSS::is_preview() || ! current_user_can( 'switch_themes' ) ) {
 			return $current;
-		else if ( Jetpack_Custom_CSS::skip_stylesheet() )
+		} else if ( Jetpack_Custom_CSS::skip_stylesheet() ) {
 			return apply_filters( 'safecss_style_filter_url', plugins_url( 'blank.css', __FILE__ ) );
+		}
 
 		return $current;
 	}
@@ -550,8 +564,9 @@ class Jetpack_Custom_CSS {
 	}
 
 	static function preview_links( $matches ) {
-		if ( 0 !== strpos( $matches[2], get_option( 'home' ) ) )
+		if ( 0 !== strpos( $matches[2], get_option( 'home' ) ) ) {
 			return $matches[0];
+		}
 
 		$link = wp_specialchars_decode( $matches[2] );
 		$link = add_query_arg( 'csspreview', 'true', $link );
@@ -563,8 +578,9 @@ class Jetpack_Custom_CSS {
 	 * Places a black bar above every preview page
 	 */
 	static function preview_flag() {
-		if ( is_admin() )
+		if ( is_admin() ) {
 			return;
+		}
 
 		$message = esc_html__( 'Preview: changes must be saved or they will be lost', 'jetpack' );
 		$message = apply_filters( 'safecss_preview_message', $message );
@@ -633,8 +649,9 @@ class Jetpack_Custom_CSS {
 	}
 
 	static function enqueue_scripts( $hook ) {
-		if ( 'appearance_page_editcss' != $hook )
+		if ( 'appearance_page_editcss' != $hook ) {
 			return;
+		}
 
 		wp_enqueue_script( 'postbox' );
 		wp_enqueue_script( 'custom-css-editor', plugins_url( 'js/css-editor.js', __FILE__ ), 'jquery', '20130325', true );
@@ -659,8 +676,10 @@ class Jetpack_Custom_CSS {
 
 		$safecss_post = Jetpack_Custom_CSS::get_post();
 
-		if ( ! empty( $safecss_post ) && 0 < $safecss_post['ID'] && wp_get_post_revisions( $safecss_post['ID'] ) )
+		if ( ! empty( $safecss_post ) && 0 < $safecss_post['ID'] && wp_get_post_revisions( $safecss_post['ID'] ) ) {
 			add_meta_box( 'revisionsdiv', __( 'CSS Revisions', 'jetpack' ), array( __CLASS__, 'revisions_meta_box' ), 'editcss', 'side' );
+		}
+
 		?>
 		<div class="wrap">
 			<?php do_action( 'custom_design_header' ); ?>
@@ -700,11 +719,13 @@ class Jetpack_Custom_CSS {
 		$custom_content_width = get_post_meta( $safecss_post['ID'], 'content_width', true );
 
 		// If custom content width hasn't been overridden and the theme has a content_width value, use that as a default.
-		if ( $custom_content_width <= 0 && ! empty( $GLOBALS['content_width'] ) )
+		if ( $custom_content_width <= 0 && ! empty( $GLOBALS['content_width'] ) ) {
 			$custom_content_width = $GLOBALS['content_width'];
+		}
 
-		if ( ! $custom_content_width || ( isset( $GLOBALS['content_width'] ) && $custom_content_width == $GLOBALS['content_width'] ) )
+		if ( ! $custom_content_width || ( isset( $GLOBALS['content_width'] ) && $custom_content_width == $GLOBALS['content_width'] ) ) {
 			$custom_content_width = '';
+		}
 
 		?>
 		<div class="misc-pub-section">
@@ -952,15 +973,17 @@ class Jetpack_Custom_CSS {
 	}
 
 	static function is_customizer_preview() {
-		if ( isset ( $GLOBALS['wp_customize'] ) )
+		if ( isset ( $GLOBALS['wp_customize'] ) ) {
 			return ! $GLOBALS['wp_customize']->is_theme_active();
+		}
 
 		return false;
 	}
 
 	static function minify( $css, $preprocessor = '' ) {
-		if ( ! $css )
+		if ( ! $css ) {
 			return '';
+		}
 
 		if ( $preprocessor ) {
 			$preprocessors = apply_filters( 'jetpack_custom_css_preprocessors', array() );
@@ -994,8 +1017,9 @@ class Jetpack_Custom_CSS {
 	static function restore_revision( $_post_id, $_revision_id ) {
 		$_post = get_post( $_post_id );
 
-		if ( 'safecss' != $_post->post_type )
+		if ( 'safecss' != $_post->post_type ) {
 			return;
+		}
 
 		$safecss_revision = Jetpack_Custom_CSS::get_current_revision();
 
@@ -1066,12 +1090,14 @@ class Jetpack_Custom_CSS {
 			$custom_content_width = intval( get_post_meta( $safecss_post['ID'], 'content_width', true ) );
 		} else {
 			$custom_css_post_id = Jetpack_Custom_CSS::post_id();
-			if ( $custom_css_post_id )
+			if ( $custom_css_post_id ) {
 				$custom_content_width = intval( get_post_meta( $custom_css_post_id, 'content_width', true ) );
+			}
 		}
 
-		if ( $custom_content_width > 0 )
+		if ( $custom_content_width > 0 ) {
 			$content_width = $custom_content_width;
+		}
 
 		return $content_width;
 	}
@@ -1103,8 +1129,9 @@ class Jetpack_Safe_CSS {
 
 		preg_match( "/^{$element}\s*{(.*)}\s*$/", $css, $matches );
 
-		if ( empty( $matches[1] ) )
+		if ( empty( $matches[1] ) ) {
 			return '';
+		}
 
 		return $matches[1];
 	}
@@ -1112,8 +1139,9 @@ class Jetpack_Safe_CSS {
 
 function safecss_class() {
 	// Wrapped so we don't need the parent class just to load the plugin
-	if ( class_exists('safecss') )
+	if ( class_exists('safecss') ) {
 		return;
+	}
 
 	require_once( dirname( __FILE__ ) . '/csstidy/class.csstidy.php' );
 
