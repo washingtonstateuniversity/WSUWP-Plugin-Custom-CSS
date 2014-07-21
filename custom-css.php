@@ -15,9 +15,9 @@ Version: 1.7.1
  *
  * Our fork, like Jetpack itself is licensed as GPLv2+ http://www.gnu.org/licenses/gpl-2.0.html
  *
- * Class Jetpack_Custom_CSS
+ * Class WSU_Custom_CSS
  */
-class Jetpack_Custom_CSS {
+class WSU_Custom_CSS {
 
 	static function init() {
 		add_action( 'wp_restore_post_revision', array( __CLASS__, 'restore_revision'   ), 10, 2 );
@@ -55,18 +55,18 @@ class Jetpack_Custom_CSS {
 		if ( isset( $_GET['custom-css'] ) ) {
 			header( 'Content-Type: text/css', true, 200 );
 			header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + 31536000) . ' GMT' ); // 1 year
-			Jetpack_Custom_CSS::print_css();
+			WSU_Custom_CSS::print_css();
 			exit;
 		}
 
-		add_action( 'admin_enqueue_scripts', array( 'Jetpack_Custom_CSS', 'enqueue_scripts'       )        );
-		add_action( 'wp_head',               array( 'Jetpack_Custom_CSS', 'link_tag'              ), 101   );
+		add_action( 'admin_enqueue_scripts', array( 'WSU_Custom_CSS', 'enqueue_scripts'       )        );
+		add_action( 'wp_head',               array( 'WSU_Custom_CSS', 'link_tag'              ), 101   );
 
 		if ( !current_user_can( 'switch_themes' ) && !is_super_admin() ) {
 			return;
 		}
 
-		add_action( 'admin_menu', array( 'Jetpack_Custom_CSS', 'menu' ) );
+		add_action( 'admin_menu', array( 'WSU_Custom_CSS', 'menu' ) );
 
 		if ( isset( $_POST['safecss'] ) && false == strstr( $_SERVER[ 'REQUEST_URI' ], 'options.php' ) ) {
 			check_admin_referer( 'safecss' );
@@ -85,18 +85,18 @@ class Jetpack_Custom_CSS {
 			}
 
 			if ( $save_result ) {
-				add_action( 'admin_notices', array( 'Jetpack_Custom_CSS', 'saved_message' ) );
+				add_action( 'admin_notices', array( 'WSU_Custom_CSS', 'saved_message' ) );
 			}
 		}
 
 		// Modify all internal links so that preview state persists
-		if ( Jetpack_Custom_CSS::is_preview() ) {
-			ob_start( array( 'Jetpack_Custom_CSS', 'buffer' ) );
+		if ( WSU_Custom_CSS::is_preview() ) {
+			ob_start( array( 'WSU_Custom_CSS', 'buffer' ) );
 		}
 	}
 
 	/**
-	 * Save new custom CSS. This should be the entry point for any third-party code using Jetpack_Custom_CSS
+	 * Save new custom CSS. This should be the entry point for any third-party code using WSU_Custom_CSS
 	 * to save CSS.
 	 *
 	 * @param array $args {
@@ -191,7 +191,7 @@ class Jetpack_Custom_CSS {
 
 		if ( $args['is_preview'] ) {
 			// Save the CSS
-			$safecss_revision_id = Jetpack_Custom_CSS::save_revision( $css, true, $args['preprocessor'] );
+			$safecss_revision_id = WSU_Custom_CSS::save_revision( $css, true, $args['preprocessor'] );
 
 			// Cache Buster
 			update_option( 'safecss_preview_rev', intval( get_option( 'safecss_preview_rev' ) ) + 1);
@@ -212,9 +212,9 @@ class Jetpack_Custom_CSS {
 		}
 
 		// Save the CSS
-		$safecss_post_id = Jetpack_Custom_CSS::save_revision( $css, false, $args['preprocessor'] );
+		$safecss_post_id = WSU_Custom_CSS::save_revision( $css, false, $args['preprocessor'] );
 
-		$safecss_post_revision = Jetpack_Custom_CSS::get_current_revision();
+		$safecss_post_revision = WSU_Custom_CSS::get_current_revision();
 
 		update_option( 'safecss_rev', intval( get_option( 'safecss_rev' ) ) + 1 );
 
@@ -240,7 +240,7 @@ class Jetpack_Custom_CSS {
 	 * @return array
 	 */
 	static function get_post() {
-		$custom_css_post_id = Jetpack_Custom_CSS::post_id();
+		$custom_css_post_id = WSU_Custom_CSS::post_id();
 
 		if ( $custom_css_post_id ) {
 			return get_post( $custom_css_post_id, ARRAY_A );
@@ -289,7 +289,7 @@ class Jetpack_Custom_CSS {
 	 * @return object
 	 */
 	static function get_current_revision() {
-		$safecss_post = Jetpack_Custom_CSS::get_post();
+		$safecss_post = WSU_Custom_CSS::get_post();
 
 		if ( empty( $safecss_post ) ) {
 			return false;
@@ -319,9 +319,9 @@ class Jetpack_Custom_CSS {
 	 * @return bool|int False if nothing saved. Post ID if a post or revision was saved.
 	 */
 	static function save_revision( $css, $is_preview = false, $preprocessor = '' ) {
-		$safecss_post = Jetpack_Custom_CSS::get_post();
+		$safecss_post = WSU_Custom_CSS::get_post();
 
-		$compressed_css = Jetpack_Custom_CSS::minify( $css, $preprocessor );
+		$compressed_css = WSU_Custom_CSS::minify( $css, $preprocessor );
 
 		// If null, there was no original safecss record, so create one
 		if ( null == $safecss_post ) {
@@ -375,11 +375,11 @@ class Jetpack_Custom_CSS {
 
 		if ( null !== $skip_stylesheet ) {
 			return $skip_stylesheet;
-		} elseif ( Jetpack_Custom_CSS::is_customizer_preview() ) {
+		} elseif ( WSU_Custom_CSS::is_customizer_preview() ) {
 			return false;
 		} else {
-			if ( Jetpack_Custom_CSS::is_preview() ) {
-				$safecss_post = Jetpack_Custom_CSS::get_current_revision();
+			if ( WSU_Custom_CSS::is_preview() ) {
+				$safecss_post = WSU_Custom_CSS::get_current_revision();
 
 				if ( $safecss_post ) {
 					return (bool) ( get_post_meta( $safecss_post['ID'], 'custom_css_add', true ) == 'no' );
@@ -387,7 +387,7 @@ class Jetpack_Custom_CSS {
 					return (bool) ( get_option( 'safecss_preview_add' ) == 'no' );
 				}
 			} else {
-				$custom_css_post_id = Jetpack_Custom_CSS::post_id();
+				$custom_css_post_id = WSU_Custom_CSS::post_id();
 
 				if ( $custom_css_post_id ) {
 					$custom_css_add = get_post_meta( $custom_css_post_id, 'custom_css_add', true );
@@ -416,15 +416,15 @@ class Jetpack_Custom_CSS {
 			return $default_css;
 		}
 
-		$option = ( Jetpack_Custom_CSS::is_preview() ) ? 'safecss_preview' : 'safecss';
+		$option = ( WSU_Custom_CSS::is_preview() ) ? 'safecss_preview' : 'safecss';
 
 		if ( 'safecss' == $option ) {
 			// Don't bother checking for a migrated 'safecss' option if it never existed
 			if ( false === get_option( 'safecss' ) || get_option( 'safecss_revision_migrated' ) ) {
-				$safecss_post = Jetpack_Custom_CSS::get_post();
+				$safecss_post = WSU_Custom_CSS::get_post();
 				$css = ( $compressed && $safecss_post['post_content_filtered'] ) ? $safecss_post['post_content_filtered'] : $safecss_post['post_content'];
 			} else {
-				$current_revision = Jetpack_Custom_CSS::get_current_revision();
+				$current_revision = WSU_Custom_CSS::get_current_revision();
 				if ( false === $current_revision ) {
 					$css = '';
 				} else {
@@ -441,10 +441,10 @@ class Jetpack_Custom_CSS {
 			}
 		}
 		else if ( 'safecss_preview' == $option ) {
-			$safecss_post = Jetpack_Custom_CSS::get_current_revision();
+			$safecss_post = WSU_Custom_CSS::get_current_revision();
 			$css = $safecss_post['post_content'];
 			$css = stripslashes( $css );
-			$css = Jetpack_Custom_CSS::minify( $css, get_post_meta( $safecss_post['ID'], 'custom_css_preprocessor', true ) );
+			$css = WSU_Custom_CSS::minify( $css, get_post_meta( $safecss_post['ID'], 'custom_css_preprocessor', true ) );
 		}
 
 		$css = str_replace( array( '\\\00BB \\\0020', '\0BB \020', '0BB 020' ), '\00BB \0020', $css );
@@ -471,7 +471,7 @@ class Jetpack_Custom_CSS {
 	static function print_css() {
 		do_action( 'safecss_print_pre' );
 
-		echo Jetpack_Custom_CSS::get_css( true );
+		echo WSU_Custom_CSS::get_css( true );
 	}
 
 	static function link_tag() {
@@ -485,22 +485,22 @@ class Jetpack_Custom_CSS {
 			return;
 		}
 
-		if ( Jetpack_Custom_CSS::is_customizer_preview() ) {
+		if ( WSU_Custom_CSS::is_customizer_preview() ) {
 			return;
 		}
 
 		$css    = '';
-		$option = Jetpack_Custom_CSS::is_preview() ? 'safecss_preview' : 'safecss';
+		$option = WSU_Custom_CSS::is_preview() ? 'safecss_preview' : 'safecss';
 
 		if ( 'safecss' == $option ) {
 			if ( get_option( 'safecss_revision_migrated' ) ) {
-				$safecss_post = Jetpack_Custom_CSS::get_post();
+				$safecss_post = WSU_Custom_CSS::get_post();
 
 				if ( ! empty( $safecss_post['post_content'] ) ) {
 					$css = $safecss_post['post_content'];
 				}
 			} else {
-				$current_revision = Jetpack_Custom_CSS::get_current_revision();
+				$current_revision = WSU_Custom_CSS::get_current_revision();
 
 				if ( ! empty( $current_revision['post_content'] ) ) {
 					$css = $current_revision['post_content'];
@@ -517,7 +517,7 @@ class Jetpack_Custom_CSS {
 		}
 
 		if ( 'safecss_preview' == $option ) {
-			$safecss_post = Jetpack_Custom_CSS::get_current_revision();
+			$safecss_post = WSU_Custom_CSS::get_current_revision();
 
 			if ( !empty( $safecss_post['post_content'] ) ) {
 				$css = $safecss_post['post_content'];
@@ -538,7 +538,7 @@ class Jetpack_Custom_CSS {
 
 		$href = apply_filters( 'safecss_href', $href, $blog_id );
 
-		if ( Jetpack_Custom_CSS::is_preview() ) {
+		if ( WSU_Custom_CSS::is_preview() ) {
 			$href = add_query_arg( 'csspreview', 'true', $href );
 		}
 		?>
@@ -549,9 +549,9 @@ class Jetpack_Custom_CSS {
 	}
 
 	static function style_filter( $current ) {
-		if ( ! Jetpack_Custom_CSS::is_preview() || ! current_user_can( 'switch_themes' ) ) {
+		if ( ! WSU_Custom_CSS::is_preview() || ! current_user_can( 'switch_themes' ) ) {
 			return $current;
-		} else if ( Jetpack_Custom_CSS::skip_stylesheet() ) {
+		} else if ( WSU_Custom_CSS::skip_stylesheet() ) {
 			return apply_filters( 'safecss_style_filter_url', plugins_url( 'blank.css', __FILE__ ) );
 		}
 
@@ -559,8 +559,8 @@ class Jetpack_Custom_CSS {
 	}
 
 	static function buffer( $html ) {
-		$html = str_replace( '</body>', Jetpack_Custom_CSS::preview_flag(), $html );
-		return preg_replace_callback( '!href=([\'"])(.*?)\\1!', array( 'Jetpack_Custom_CSS', 'preview_links' ), $html );
+		$html = str_replace( '</body>', WSU_Custom_CSS::preview_flag(), $html );
+		return preg_replace_callback( '!href=([\'"])(.*?)\\1!', array( 'WSU_Custom_CSS', 'preview_links' ), $html );
 	}
 
 	static function preview_links( $matches ) {
@@ -613,10 +613,10 @@ class Jetpack_Custom_CSS {
 
 	static function menu() {
 		$title = __( 'Edit CSS', 'jetpack' );
-		$hook = add_theme_page( $title, $title, 'edit_theme_options', 'editcss', array( 'Jetpack_Custom_CSS', 'admin' ) );
+		$hook = add_theme_page( $title, $title, 'edit_theme_options', 'editcss', array( 'WSU_Custom_CSS', 'admin' ) );
 
-		add_action( "load-revision.php", array( 'Jetpack_Custom_CSS', 'prettify_post_revisions' ) );
-		add_action( "load-$hook", array( 'Jetpack_Custom_CSS', 'update_title' ) );
+		add_action( "load-revision.php", array( 'WSU_Custom_CSS', 'prettify_post_revisions' ) );
+		add_action( "load-$hook", array( 'WSU_Custom_CSS', 'update_title' ) );
 	}
 
 	/**
@@ -629,7 +629,7 @@ class Jetpack_Custom_CSS {
 	}
 
 	static function prettify_post_revisions() {
-		add_filter( 'the_title', array( 'Jetpack_Custom_CSS', 'post_title' ), 10, 2 );
+		add_filter( 'the_title', array( 'WSU_Custom_CSS', 'post_title' ), 10, 2 );
 	}
 
 	static function post_title( $title, $post_id ) {
@@ -674,7 +674,7 @@ class Jetpack_Custom_CSS {
 		add_meta_box( 'submitdiv', __( 'Publish', 'jetpack' ), array( __CLASS__, 'publish_box' ), 'editcss', 'side' );
 		add_action( 'custom_css_submitbox_misc_actions', array( __CLASS__, 'content_width_settings' ) );
 
-		$safecss_post = Jetpack_Custom_CSS::get_post();
+		$safecss_post = WSU_Custom_CSS::get_post();
 
 		if ( ! empty( $safecss_post ) && 0 < $safecss_post['ID'] && wp_get_post_revisions( $safecss_post['ID'] ) ) {
 			add_meta_box( 'revisionsdiv', __( 'CSS Revisions', 'jetpack' ), array( __CLASS__, 'revisions_meta_box' ), 'editcss', 'side' );
@@ -695,7 +695,7 @@ class Jetpack_Custom_CSS {
 					<div id="post-body" class="metabox-holder columns-2">
 						<div id="post-body-content">
 							<div class="postarea">
-								<textarea id="safecss" name="safecss"<?php if ( SAFECSS_USE_ACE ) echo ' class="hide-if-js"'; ?>><?php echo esc_textarea( Jetpack_Custom_CSS::get_css() ); ?></textarea>
+								<textarea id="safecss" name="safecss"<?php if ( SAFECSS_USE_ACE ) echo ' class="hide-if-js"'; ?>><?php echo esc_textarea( WSU_Custom_CSS::get_css() ); ?></textarea>
 								<div class="clear"></div>
 							</div>
 						</div>
@@ -714,7 +714,7 @@ class Jetpack_Custom_CSS {
 	 * Content width setting callback
 	 */
 	static function content_width_settings() {
-		$safecss_post = Jetpack_Custom_CSS::get_current_revision();
+		$safecss_post = WSU_Custom_CSS::get_current_revision();
 
 		$custom_content_width = get_post_meta( $safecss_post['ID'], 'content_width', true );
 
@@ -811,10 +811,10 @@ class Jetpack_Custom_CSS {
 			<div id="misc-publishing-actions">
 				<?php
 
-				$preprocessors = apply_filters( 'jetpack_custom_css_preprocessors', array() );
+				$preprocessors = apply_filters( 'wsu_custom_css_preprocessors', array() );
 
 				if ( ! empty( $preprocessors ) ) {
-					$safecss_post = Jetpack_Custom_CSS::get_current_revision();
+					$safecss_post = WSU_Custom_CSS::get_current_revision();
 					$selected_preprocessor_key = get_post_meta( $safecss_post['ID'], 'custom_css_preprocessor', true );
 					$selected_preprocessor = isset( $preprocessors[$selected_preprocessor_key] ) ? $preprocessors[$selected_preprocessor_key] : null;
 
@@ -844,7 +844,7 @@ class Jetpack_Custom_CSS {
 					<?php
 				}
 
-				$safecss_post = Jetpack_Custom_CSS::get_current_revision();
+				$safecss_post = WSU_Custom_CSS::get_current_revision();
 
 				$add_css = ( get_post_meta( $safecss_post['ID'], 'custom_css_add', true ) != 'no' );
 
@@ -944,8 +944,8 @@ class Jetpack_Custom_CSS {
 	 * Hook in init at priority 11 to disable custom CSS.
 	 */
 	static function disable() {
-		remove_action( 'wp_head', array( 'Jetpack_Custom_CSS', 'link_tag' ), 101 );
-	    remove_filter( 'stylesheet_uri', array( 'Jetpack_Custom_CSS', 'style_filter' ) );
+		remove_action( 'wp_head', array( 'WSU_Custom_CSS', 'link_tag' ), 101 );
+	    remove_filter( 'stylesheet_uri', array( 'WSU_Custom_CSS', 'style_filter' ) );
 	}
 
 	/**
@@ -953,8 +953,8 @@ class Jetpack_Custom_CSS {
 	 * themes is a sure-fire way to get a clean start.
 	 */
 	static function reset() {
-		$safecss_post_id = Jetpack_Custom_CSS::save_revision( '' );
-		$safecss_revision = Jetpack_Custom_CSS::get_current_revision();
+		$safecss_post_id = WSU_Custom_CSS::save_revision( '' );
+		$safecss_revision = WSU_Custom_CSS::get_current_revision();
 
 		update_option( 'safecss_rev', intval( get_option( 'safecss_rev' ) ) + 1 );
 
@@ -986,7 +986,7 @@ class Jetpack_Custom_CSS {
 		}
 
 		if ( $preprocessor ) {
-			$preprocessors = apply_filters( 'jetpack_custom_css_preprocessors', array() );
+			$preprocessors = apply_filters( 'wsu_custom_css_preprocessors', array() );
 
 			if ( isset( $preprocessors[$preprocessor] ) ) {
 				$css = call_user_func( $preprocessors[$preprocessor]['callback'], $css );
@@ -1021,7 +1021,7 @@ class Jetpack_Custom_CSS {
 			return;
 		}
 
-		$safecss_revision = Jetpack_Custom_CSS::get_current_revision();
+		$safecss_revision = WSU_Custom_CSS::get_current_revision();
 
 		$content_width = get_post_meta( $_revision_id, 'content_width', true );
 		$custom_css_add = get_post_meta( $_revision_id, 'custom_css_add', true );
@@ -1085,11 +1085,11 @@ class Jetpack_Custom_CSS {
 	static function jetpack_content_width( $content_width ) {
 		$custom_content_width = 0;
 
-		if ( Jetpack_Custom_CSS::is_preview() ) {
-			$safecss_post = Jetpack_Custom_CSS::get_current_revision();
+		if ( WSU_Custom_CSS::is_preview() ) {
+			$safecss_post = WSU_Custom_CSS::get_current_revision();
 			$custom_content_width = intval( get_post_meta( $safecss_post['ID'], 'content_width', true ) );
 		} else {
-			$custom_css_post_id = Jetpack_Custom_CSS::post_id();
+			$custom_css_post_id = WSU_Custom_CSS::post_id();
 			if ( $custom_css_post_id ) {
 				$custom_content_width = intval( get_post_meta( $custom_css_post_id, 'content_width', true ) );
 			}
@@ -1103,7 +1103,7 @@ class Jetpack_Custom_CSS {
 	}
 }
 
-class Jetpack_Safe_CSS {
+class WSU_Safe_CSS {
 	static function filter_attr( $css, $element = 'div' ) {
 		safecss_class();
 
@@ -1166,10 +1166,10 @@ function safecss_class() {
 
 if ( ! function_exists( 'safecss_filter_attr' ) ) {
 	function safecss_filter_attr( $css, $element = 'div' ) {
-		return Jetpack_Safe_CSS::filter_attr( $css, $element );
+		return WSU_Safe_CSS::filter_attr( $css, $element );
 	}
 }
 
-add_action( 'init', array( 'Jetpack_Custom_CSS', 'init' ) );
+add_action( 'init', array( 'WSU_Custom_CSS', 'init' ) );
 
 include dirname( __FILE__ ) . '/preprocessors.php';
