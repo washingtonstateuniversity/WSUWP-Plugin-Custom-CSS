@@ -101,12 +101,16 @@ class Jetpack_Custom_CSS {
 	 * Save new custom CSS. This should be the entry point for any third-party code using Jetpack_Custom_CSS
 	 * to save CSS.
 	 *
-	 * @param array $args Array of arguments:
-	 *        string $css The CSS (or LESS or Sass)
-	 *        bool $is_preview Whether this CSS is preview or published
-	 *        string preprocessor Which CSS preprocessor to use
-	 *        bool $add_to_existing Whether this CSS replaces the theme's CSS or supplements it.
-	 *        int $content_width A custom $content_width to go along with this CSS.
+	 * @param array $args {
+	 *     Array of arguments:
+	 *
+	 *     @type string $css             The CSS (or LESS or Sass)
+	 *     @type bool   $is_preview      Whether this CSS is preview or published
+	 *     @type string $preprocessor    Which CSS preprocessor to use
+	 *     @type bool   $add_to_existing Whether this CSS replaces the theme's CSS or supplements it.
+	 *     @type int    $content_width   A custom $content_width to go along with this CSS.
+	 * }
+	 *
 	 * @return int The post ID of the saved Custom CSS post.
 	 */
 	public static function save( $args = array() ) {
