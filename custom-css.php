@@ -596,7 +596,6 @@ class Jetpack_Custom_CSS {
 	}
 
 	static function menu() {
-		$parent = 'themes.php';
 		$title = __( 'Edit CSS', 'jetpack' );
 		$hook = add_theme_page( $title, $title, 'edit_theme_options', 'editcss', array( 'Jetpack_Custom_CSS', 'admin' ) );
 
