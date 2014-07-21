@@ -345,13 +345,8 @@ class Jetpack_Custom_CSS {
 		$safecss_post['post_content_filtered'] = $compressed_css;
 
 		// Set excerpt to current theme, for display in revisions list
-		if ( function_exists( 'wp_get_theme' ) ) {
-			$current_theme = wp_get_theme();
-			$safecss_post['post_excerpt'] = $current_theme->Name;
-		}
-		else {
-			$safecss_post['post_excerpt'] = get_current_theme();
-		}
+		$current_theme = wp_get_theme();
+		$safecss_post['post_excerpt'] = $current_theme->Name;
 
 		// Don't carry over last revision's timestamps, otherwise revisions all have matching timestamps
 		unset( $safecss_post['post_date'] );
