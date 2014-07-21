@@ -277,7 +277,7 @@ class WSU_Custom_CSS {
 			wp_cache_set( 'custom_css_post_id', $custom_css_post_id );
 		}
 
-		if ( ! $custom_css_post_id ) {
+		if ( 0 === $custom_css_post_id ) {
 			return false;
 		}
 
