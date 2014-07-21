@@ -308,9 +308,10 @@ class Jetpack_Custom_CSS {
 	 * Checks to see if content was modified before really saving
 	 *
 	 * @param string $css
-	 * @param bool $is_preview
-	 * @return bool|int If nothing was saved, returns false. If a post
-	 *                  or revision was saved, returns the post ID.
+	 * @param bool   $is_preview
+	 * @param string $preprocessor
+	 *
+	 * @return bool|int False if nothing saved. Post ID if a post or revision was saved.
 	 */
 	static function save_revision( $css, $is_preview = false, $preprocessor = '' ) {
 		$safecss_post = Jetpack_Custom_CSS::get_post();
