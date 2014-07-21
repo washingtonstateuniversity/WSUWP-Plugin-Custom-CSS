@@ -886,15 +886,8 @@ class WSU_Custom_CSS {
 	 * Render metabox listing CSS revisions and the themes that correspond to the revisions.
 	 * Called by safecss_admin
 	 *
-	 * @global $post
 	 * @param array $safecss_post
-	 * @uses wp_revisions_to_keep
-	 * @uses WP_Query
-	 * @uses wp_post_revision_title
-	 * @uses esc_html
-	 * @uses add_query_arg
-	 * @uses menu_page_url
-	 * @uses wp_reset_query
+	 *
 	 * @return string
 	 */
 	static function revisions_meta_box( $safecss_post ) {
