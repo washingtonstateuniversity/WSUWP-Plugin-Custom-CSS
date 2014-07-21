@@ -54,7 +54,7 @@ class WSU_Custom_CSS {
 		// Short-circuit WP if this is a CSS stylesheet request
 		if ( isset( $_GET['custom-css'] ) ) {
 			header( 'Content-Type: text/css', true, 200 );
-			header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + 31536000) . ' GMT' ); // 1 year
+			header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + 31536000 ) . ' GMT' ); // 1 year
 			WSU_Custom_CSS::print_css();
 			exit;
 		}
@@ -79,7 +79,7 @@ class WSU_Custom_CSS {
 				'content_width'   => isset( $_POST['custom_content_width'] ) ? $_POST['custom_content_width'] : false,
 			) );
 
-			if ( $_POST['action'] == 'preview' ) {
+			if ( 'preview' === $_POST['action'] ) {
 				wp_safe_redirect( add_query_arg( 'csspreview', 'true', trailingslashit( home_url() ) ) );
 				exit;
 			}
@@ -207,7 +207,6 @@ class WSU_Custom_CSS {
 				return $safecss_revision_id;
 			}
 
-			// Freetrial only.
 			do_action( 'safecss_save_preview_post' );
 		}
 
@@ -250,7 +249,9 @@ class WSU_Custom_CSS {
 	}
 
 	/**
-	 * Get the post ID of the published custom CSS post.
+	 * Get the post ID of the most recently published custom CSS post. As there is
+	 * only one 'post' that we considered published for use as the stylesheet, we
+	 * can assume that ordereding by date descending will give us the correct post.
 	 *
 	 * @return int|bool The post ID if it exists; false otherwise.
 	 */
@@ -269,10 +270,10 @@ class WSU_Custom_CSS {
 			if ( count( $custom_css_posts ) > 0 ) {
 				$custom_css_post_id = $custom_css_posts[0]->ID;
 			} else {
+				// Save post_id=0 to note that no post exists.
 				$custom_css_post_id = 0;
 			}
 
-			// Save post_id=0 to note that no safecss post exists.
 			wp_cache_set( 'custom_css_post_id', $custom_css_post_id );
 		}
 
