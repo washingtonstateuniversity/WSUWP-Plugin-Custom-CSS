@@ -20,8 +20,6 @@ Version: 1.7.1
 class Jetpack_Custom_CSS {
 
 	static function init() {
-
-		add_action( 'switch_theme',             array( __CLASS__, 'reset'              )        );
 		add_action( 'wp_restore_post_revision', array( __CLASS__, 'restore_revision'   ), 10, 2 );
 
 		// Save revisions for posts of type safecss.
