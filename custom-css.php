@@ -899,19 +899,13 @@ class Jetpack_Custom_CSS {
 
 			global $post;
 
-			while ( $revisions->have_posts() ) :
+			while ( $revisions->have_posts() ) {
 				$revisions->the_post();
-
-				?><li>
-					<?php
-						echo wp_post_revision_title( $post );
-
-						if ( ! empty( $post->post_excerpt ) )
-							echo ' (' . esc_html( $post->post_excerpt ) . ')';
-					?>
-				</li><?php
-
-			endwhile;
+				$author = get_the_author_meta( 'display_name', $post->post_author );
+				$age = human_time_diff( strtotime( $post->post_modified ), current_time( 'timestamp' ) );
+				$link = get_edit_post_link( $post->ID );
+				?><li><?php echo get_avatar( $post->post_author, 24 ) . ' ' . $author . ' <a href="' . esc_url( $link ) . '">' . $age . ' ago</a>'; ?></li><?php
+			}
 
 			?></ul><?php
 
