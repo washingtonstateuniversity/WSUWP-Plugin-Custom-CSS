@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: WSU Custom CSS
-Plugin URI: http://web.wsu.edu
+Plugin URI: https://web.wsu.edu/
 Description: Custom CSS via custom post type.
 Author: washingtonstateuniversity, jeremyfelt, automattic
-Version: 2.1.3
+Version: 2.1.4
 */
 
 /**
