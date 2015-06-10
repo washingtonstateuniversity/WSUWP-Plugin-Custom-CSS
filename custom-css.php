@@ -549,7 +549,7 @@ class WSU_Custom_CSS {
 		// We plan on the style being enqueued in the Spine parent theme. This should be considered temporary
 		// until we can rewrite to handle more than the Spine theme.
 		if ( 'spine' === $current_theme->template ) {
-			wp_enqueue_style( 'spine-custom-css', esc_url( $href ), array(), spine_get_script_version() );
+			wp_enqueue_style( 'spine-custom-css', $href, array(), spine_get_script_version() );
 		} else {
 			?>
 			<link rel="stylesheet" id="custom-css-css" type="text/css" href="<?php echo esc_url( $href ); ?>" />
