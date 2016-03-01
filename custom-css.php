@@ -22,9 +22,6 @@ class WSU_Custom_CSS {
 	static function init() {
 		add_action( 'wp_restore_post_revision', array( __CLASS__, 'restore_revision'   ), 10, 2 );
 
-		// Save revisions for posts of type safecss.
-		add_filter( 'revision_redirect',        array( __CLASS__, 'revision_redirect'  )        );
-
 		// Override the edit link, the default link causes a redirect loop
 		add_filter( 'get_edit_post_link',       array( __CLASS__, 'revision_post_link' ), 10, 3 );
 
@@ -695,7 +692,7 @@ class WSU_Custom_CSS {
 		?>
 		<div class="wrap">
 			<?php do_action( 'custom_design_header' ); ?>
-			<h2><?php _e( 'CSS Stylesheet Editor', 'jetpack' ); ?></h2>
+			<h1><?php _e( 'CSS Stylesheet Editor', 'jetpack' ); ?></h1>
 			<form id="safecssform" action="" method="post">
 				<?php wp_nonce_field( 'safecss' ) ?>
 				<?php wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
@@ -937,7 +934,7 @@ class WSU_Custom_CSS {
 			if ( $revisions->found_posts > 6 && !$show_all_revisions ) {
 				?>
 				<br>
-				<a href="<?php echo add_query_arg( 'show_all_rev', 'true', menu_page_url( 'editcss', false ) ); ?>"><?php esc_html_e( 'Show more', 'jetpack' ); ?></a>
+				<a href="<?php echo add_query_arg( 'show_all_rev', 'true', menu_page_url( 'editcss', false ) ); ?>"><?php esc_html_e( 'Show all', 'jetpack' ); ?></a>
 				<?php
 			}
 		}
@@ -1046,22 +1043,6 @@ class WSU_Custom_CSS {
 		delete_option( 'safecss_preview_add' );
 	}
 
-	static function revision_redirect( $redirect ) {
-		global $post;
-
-		if ( 'safecss' == $post->post_type ) {
-			if ( strstr( $redirect, 'action=edit' ) ) {
-				return 'themes.php?page=editcss';
-			}
-
-			if ( 'edit.php' == $redirect ) {
-				return '';
-			}
-		}
-
-		return $redirect;
-	}
-
 	static function revision_post_link( $post_link, $post_id, $context ) {
 		if ( !$post_id = (int) $post_id ) {
 			return $post_link;
@@ -1151,7 +1132,7 @@ function safecss_class() {
 	require_once( dirname( __FILE__ ) . '/csstidy/class.csstidy.php' );
 
 	class safecss extends csstidy_optimise {
-		function safecss( &$css ) {
+		function __construct( &$css ) {
 			return $this->csstidy_optimise( $css );
 		}
 
