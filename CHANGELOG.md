@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.6 (March 1, 2016)
+
+* Remove unused WP.com hook.
+* Fix deprecated PHP4 constructor.
+* Match core style with `H1` header on plugin page.
+* Use "Show all" for revisions rather than "Show more".
+
 ## 2.1.3 (June 8, 2015)
 
 * Add more flexbox support
