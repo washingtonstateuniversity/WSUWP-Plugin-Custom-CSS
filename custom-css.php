@@ -22,9 +22,6 @@ class WSU_Custom_CSS {
 	static function init() {
 		add_action( 'wp_restore_post_revision', array( __CLASS__, 'restore_revision'   ), 10, 2 );
 
-		// Save revisions for posts of type safecss.
-		add_filter( 'revision_redirect',        array( __CLASS__, 'revision_redirect'  )        );
-
 		// Override the edit link, the default link causes a redirect loop
 		add_filter( 'get_edit_post_link',       array( __CLASS__, 'revision_post_link' ), 10, 3 );
 
@@ -1044,22 +1041,6 @@ class WSU_Custom_CSS {
 		update_post_meta( $_post->ID, 'custom_css_preprocessor', $preprocessor );
 
 		delete_option( 'safecss_preview_add' );
-	}
-
-	static function revision_redirect( $redirect ) {
-		global $post;
-
-		if ( 'safecss' == $post->post_type ) {
-			if ( strstr( $redirect, 'action=edit' ) ) {
-				return 'themes.php?page=editcss';
-			}
-
-			if ( 'edit.php' == $redirect ) {
-				return '';
-			}
-		}
-
-		return $redirect;
 	}
 
 	static function revision_post_link( $post_link, $post_id, $context ) {
