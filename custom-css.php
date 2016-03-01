@@ -695,7 +695,7 @@ class WSU_Custom_CSS {
 		?>
 		<div class="wrap">
 			<?php do_action( 'custom_design_header' ); ?>
-			<h2><?php _e( 'CSS Stylesheet Editor', 'jetpack' ); ?></h2>
+			<h1><?php _e( 'CSS Stylesheet Editor', 'jetpack' ); ?></h1>
 			<form id="safecssform" action="" method="post">
 				<?php wp_nonce_field( 'safecss' ) ?>
 				<?php wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
