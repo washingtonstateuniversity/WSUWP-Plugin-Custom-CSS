@@ -672,6 +672,7 @@ class WSU_Custom_CSS {
 
 			wp_register_script( 'jetpack-css-codemirror', plugins_url( 'js/codemirror.min.js', __FILE__ ), array(), '3.16', true );
 			wp_enqueue_script( 'jetpack-css-use-codemirror', plugins_url( 'js/use-codemirror.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script( 'jetpack-css-fullscreen', plugins_url( 'js/fullscreen.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
 		}
 	}
 
@@ -902,7 +903,7 @@ class WSU_Custom_CSS {
 	static function revisions_meta_box( $safecss_post ) {
 
 		$show_all_revisions = isset( $_GET['show_all_rev'] );
-		
+
 		$max_revisions = defined( 'WP_POST_REVISIONS' ) && is_numeric( WP_POST_REVISIONS ) ? (int) WP_POST_REVISIONS : 25;
 
 		$posts_per_page = $show_all_revisions ? $max_revisions : 6;
