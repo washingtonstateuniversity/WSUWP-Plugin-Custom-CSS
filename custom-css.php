@@ -56,14 +56,14 @@ class WSU_Custom_CSS {
 			exit;
 		}
 
-		add_action( 'admin_enqueue_scripts', array( 'WSU_Custom_CSS', 'enqueue_scripts'       )        );
+		add_action( 'admin_enqueue_scripts', array( 'WSU_Custom_CSS', 'enqueue_scripts' ) );
 
 		$current_theme = wp_get_theme();
 
 		if ( 'spine' === $current_theme->template ) {
 			add_action( 'spine_enqueue_styles', array( 'WSU_Custom_CSS', 'link_tag' ), 10 );
 		} else {
-			add_action( 'wp_head',               array( 'WSU_Custom_CSS', 'link_tag'              ), 101   );
+			add_action( 'wp_head', array( 'WSU_Custom_CSS', 'link_tag' ), 101 );
 		}
 
 		if ( !current_user_can( 'switch_themes' ) && !is_super_admin() ) {
