@@ -12,8 +12,14 @@
 			$.ajax({
 				url: frm.attr('action'),
 				type:'POST',
-				data:frm.serialize(),
-				success: function(data){ var response = $('<html />').html(data); $('.post-revisions').replaceWith(response.find('.post-revisions')); },
+				data:frm.serialize()+"&save=Save Stylesheet",
+				success: function(data){ 
+                    var response = $('<html />').html(data); 
+                    jQuery('.post-revisions').html(response.find('.post-revisions').html()); 
+                    jQuery('#meta-box-order-nonce').val(response.find('#meta-box-order-nonce').val()); 
+                    jQuery('#closedpostboxesnonce').val(response.find('#closedpostboxesnonce').val()); 
+                    jQuery('#_wpnonce').val(response.find('#_wpnonce').val()); 
+                },
 				error: function(data){  }
 			});
 		},
@@ -34,6 +40,7 @@
 				lineWrapping: true
 			});
 			this.setEditorHeight();
+            this.addListeners();
 		},
 		addListeners: function() {
 			// nice sizing

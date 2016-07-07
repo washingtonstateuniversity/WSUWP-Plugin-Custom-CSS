@@ -56,14 +56,14 @@ class WSU_Custom_CSS {
 			exit;
 		}
 
-		add_action( 'admin_enqueue_scripts', array( 'WSU_Custom_CSS', 'enqueue_scripts'       )        );
+		add_action( 'admin_enqueue_scripts', array( 'WSU_Custom_CSS', 'enqueue_scripts' ) );
 
 		$current_theme = wp_get_theme();
 
 		if ( 'spine' === $current_theme->template ) {
 			add_action( 'spine_enqueue_styles', array( 'WSU_Custom_CSS', 'link_tag' ), 10 );
 		} else {
-			add_action( 'wp_head',               array( 'WSU_Custom_CSS', 'link_tag'              ), 101   );
+			add_action( 'wp_head', array( 'WSU_Custom_CSS', 'link_tag' ), 101 );
 		}
 
 		if ( !current_user_can( 'switch_themes' ) && !is_super_admin() ) {
@@ -672,6 +672,7 @@ class WSU_Custom_CSS {
 
 			wp_register_script( 'jetpack-css-codemirror', plugins_url( 'js/codemirror.min.js', __FILE__ ), array(), '3.16', true );
 			wp_enqueue_script( 'jetpack-css-use-codemirror', plugins_url( 'js/use-codemirror.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script( 'jetpack-css-fullscreen', plugins_url( 'js/fullscreen.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
 		}
 	}
 
@@ -902,7 +903,7 @@ class WSU_Custom_CSS {
 	static function revisions_meta_box( $safecss_post ) {
 
 		$show_all_revisions = isset( $_GET['show_all_rev'] );
-		
+
 		$max_revisions = defined( 'WP_POST_REVISIONS' ) && is_numeric( WP_POST_REVISIONS ) ? (int) WP_POST_REVISIONS : 25;
 
 		$posts_per_page = $show_all_revisions ? $max_revisions : 6;
