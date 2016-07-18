@@ -7,27 +7,10 @@
 			'less': 'text/x-less',
 			'sass': 'text/x-scss'
 		},
-		ajaxSaveCSS: function(){
-			var frm = $('#safecssform');
-			$.ajax({
-				url: frm.attr('action'),
-				type:'POST',
-				data:frm.serialize(),
-				success: function(data){ var response = $('<html />').html(data); $('.post-revisions').replaceWith(response.find('.post-revisions')); },
-				error: function(data){  }
-			});
-		},
 		init: function() {
 			this.$textarea = $( '#safecss' );
 			this.editor = window.CodeMirror.fromTextArea( this.$textarea.get(0),{
 				mode: this.getMode(),
-				extraKeys: {
-					"Esc": function(cm) {
-					  cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-					},
-					"Ctrl-S": function(instance) { this.ajaxSaveCSS(); },
-					"Cmd-S": function(instance) { this.ajaxSaveCSS(); }					
-				  },
 				lineNumbers: true,
 				tabSize: 2,
 				indentWithTabs: true,
