@@ -25,8 +25,8 @@
 					"Esc": function(cm) {
 					  cm.setOption("fullScreen", !cm.getOption("fullScreen"));
 					},
-					"Ctrl-S": function(instance) { WSU_CSS.ajaxSaveCSS(); },
-					"Cmd-S": function(instance) { WSU_CSS.ajaxSaveCSS(); }
+					"Ctrl-S": function(instance) { this.ajaxSaveCSS(); },
+					"Cmd-S": function(instance) { this.ajaxSaveCSS(); }					
 				  },
 				lineNumbers: true,
 				tabSize: 2,
