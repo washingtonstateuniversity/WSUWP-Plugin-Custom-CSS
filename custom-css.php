@@ -182,7 +182,8 @@ class WSU_Custom_CSS {
 
 		$css = $orig = $args['css'];
 
-		$css = preg_replace( '/\\\\([0-9a-fA-F]{4})/', '\\\\\\\\$1', $prev = $css );
+		// prevent content: '\3434' from turning into '\\3434'
+		$css = str_replace( array( '\'\\\\', '"\\\\' ), array( '\'\\', '"\\' ), $css );
 
 		if ( $css != $prev ) {
 			$warnings[] = 'preg_replace found stuff';
