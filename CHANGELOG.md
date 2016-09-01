@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.7 (September 1, 2016)
+
+* Add support for `font-feature-settings` property.
+* Update CSSTidy constructors for PHP7 compatibility.
+* Only query for one revision when checking that revisions exist.
+* Allow multiple `display` properties to be used.
+* Update how data is slashed.
+
 ## 2.1.6 (March 1, 2016)
 
 * Remove unused WP.com hook.
