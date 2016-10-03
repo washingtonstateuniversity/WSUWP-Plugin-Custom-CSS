@@ -8,19 +8,21 @@
 			'sass': 'text/x-scss'
 		},
 		ajaxSaveCSS: function(){
+            jQuery("#message").remove();
+            jQuery('<div id="message" class="updated fade"><p><strong><div class="customcsspreloader"></div> Saving...</strong></p></div>').insertBefore("form");
 			var frm = $('#safecssform');
-			$.ajax({
-				url: frm.attr('action'),
+            $.ajax({
+				url: ajax_object.ajaxurl,
 				type:'POST',
-				data:frm.serialize()+"&save=Save Stylesheet",
+				data:frm.serialize()+"&save=Save Stylesheet&security="+ajax_object.ajax_nonce+"&action=ajax_custom_css_handle_save",
 				success: function(data){ 
-                    var response = $('<html />').html(data); 
-                    jQuery('.post-revisions').html(response.find('.post-revisions').html()); 
-                    jQuery('#meta-box-order-nonce').val(response.find('#meta-box-order-nonce').val()); 
-                    jQuery('#closedpostboxesnonce').val(response.find('#closedpostboxesnonce').val()); 
-                    jQuery('#_wpnonce').val(response.find('#_wpnonce').val()); 
+                    jQuery("#message").html("<p><strong>Stylesheet saved.</strong></p>");
+                    jQuery("#message").delay(1000).fadeOut();
                 },
-				error: function(data){  }
+				error: function(data){ 
+                    jQuery("#message").html("<p><strong>There was an error saving.  Try using the 'Save Stylesheet' button.</strong></p>");
+                    jQuery("#message").addClass("error");
+                }
 			});
 		},
 		init: function() {
