@@ -12,10 +12,9 @@
             jQuery('<div id="message" class="updated fade"><p><strong><div class="customcsspreloader"></div> Saving...</strong></p></div>').insertBefore("form");
 			var frm = $('#safecssform');
             $.ajax({
-				url: "/wp-admin/admin-ajax.php",
+				url: ajax_object.ajaxurl,
 				type:'POST',
-                action:'ajax_custom_css_handle_save',
-				data:frm.serialize()+"&save=Save Stylesheet",
+				data:frm.serialize()+"&save=Save Stylesheet&security="+ajax_object.ajax_nonce+"&action=ajax_custom_css_handle_save",
 				success: function(data){ 
                     jQuery("#message").html("<p><strong>Stylesheet saved.</strong></p>");
                     jQuery("#message").delay(1000).fadeOut();

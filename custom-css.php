@@ -7,8 +7,8 @@ Author: washingtonstateuniversity, jeremyfelt, automattic
 Version: 2.1.6
 */
 
-add_action( 'wp_ajax_nopriv_ajax_custom_css_handle_save', 'WSU_Custom_CSS.ajax_custom_css_handle_save' );
-add_action( 'wp_ajax_ajax_custom_css_handle_save', 'WSU_Custom_CSS.ajax_custom_css_handle_save' );
+add_action( 'wp_ajax_nopriv_ajax_custom_css_handle_save', 'WSU_Custom_CSS::ajax_custom_css_handle_save' );
+add_action( 'wp_ajax_ajax_custom_css_handle_save', 'WSU_Custom_CSS::ajax_custom_css_handle_save' );
 
 /**
  * The following is a fork of the custom CSS module included with Automattic's Jetpack plugin. The
@@ -75,29 +75,30 @@ class WSU_Custom_CSS {
 
 		add_action( 'admin_menu', array( 'WSU_Custom_CSS', 'menu' ) );
 
-		if ( isset( $_POST['safecss'] ) && false == strstr( $_SERVER[ 'REQUEST_URI' ], 'options.php' ) ) {
+		if ( !isset( $_POST['security'] ) && isset( $_POST['safecss'] ) && false == strstr( $_SERVER[ 'REQUEST_URI' ], 'options.php' ) ) {
 			self::custom_css_handle_save();
-		}
+     	}
 
 		// Modify all internal links so that preview state persists
 		if ( WSU_Custom_CSS::is_preview() ) {
 			ob_start( array( 'WSU_Custom_CSS', 'buffer' ) );
 		}
+        $params = array(
+          'ajaxurl' => admin_url('admin-ajax.php'),
+          'ajax_nonce' => wp_create_nonce('custom_css')
+        );
+        wp_enqueue_script('jquery');
+        wp_localize_script( 'jquery', 'ajax_object', $params );
 	}
     
     public static function ajax_custom_css_handle_save()
     {
-        echo "ajax_custom_css_handle_save";
-        self::custom_css_handle_save();
-        $response = wp_nonce_field( 'safecss' );
-        echo $response;
-        return $response;
-		
+        check_ajax_referer( 'custom_css', 'security' );
+        self::custom_css_handle_save();		
     }
     
     public static function custom_css_handle_save()
     {
-        echo "custom_css_handle_save";
         check_admin_referer( 'safecss' );
 
         $save_result = self::save( array(
