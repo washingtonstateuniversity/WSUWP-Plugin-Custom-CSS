@@ -31,8 +31,17 @@
 				mode: this.getMode(),
 				extraKeys: {
 					"Esc": function(cm) {
-					  cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-					},
+                        var fullscreen = cm.getOption("fullScreen");
+					    cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                        if(!fullscreen)
+                        {
+                            jQuery("body").addClass("fullscreenmode");
+                        }
+                        else
+                        {
+                            jQuery("body").removeClass("fullscreenmode");
+                        }
+                    },
 					"Ctrl-S": function(instance) { WSU_CSS.ajaxSaveCSS(); },
 					"Cmd-S": function(instance) { WSU_CSS.ajaxSaveCSS(); }
 				  },

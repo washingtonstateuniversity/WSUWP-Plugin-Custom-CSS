@@ -37,6 +37,15 @@
   z-index: 199999;
 }
 
+body.fullscreenmode #message {
+    position: absolute;
+    z-index: 9999999;
+    width: 50%;
+    top: 0;
+    left: 50%;
+    margin-left: -38%;    
+}
+
 .customcsspreloader {
     background-image: url("../images/loader.png");
     width:20px;

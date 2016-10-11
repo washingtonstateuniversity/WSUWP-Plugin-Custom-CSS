@@ -844,7 +844,7 @@ class WSU_Custom_CSS {
 				<?php
 
 				$preprocessors = apply_filters( 'wsu_custom_css_preprocessors', array() );
-
+/*
 				if ( ! empty( $preprocessors ) ) {
 					$safecss_post = WSU_Custom_CSS::get_current_revision();
 					$selected_preprocessor_key = get_post_meta( $safecss_post['ID'], 'custom_css_preprocessor', true );
@@ -852,7 +852,7 @@ class WSU_Custom_CSS {
 
 					?>
 					<div class="misc-pub-section">
-						<label><?php esc_html_e( 'Preprocessor:', 'jetpack' ); ?></label>
+                        <label><?php esc_html_e( 'Preprocessor:', 'jetpack' ); ?></label>
 						<span id="preprocessor-display"><?php echo esc_html( $selected_preprocessor ? $selected_preprocessor['name'] : __( 'None', 'jetpack' ) ); ?></span>
 						<a class="edit-preprocessor hide-if-no-js" href="#preprocessor"><?php echo esc_html_e( 'Edit', 'jetpack' ); ?></a>
 						<div id="preprocessor-select" class="hide-if-js">
@@ -875,7 +875,7 @@ class WSU_Custom_CSS {
 					</div>
 					<?php
 				}
-
+                */
 				$safecss_post = WSU_Custom_CSS::get_current_revision();
 
 				$add_css = ( get_post_meta( $safecss_post['ID'], 'custom_css_add', true ) != 'no' );
