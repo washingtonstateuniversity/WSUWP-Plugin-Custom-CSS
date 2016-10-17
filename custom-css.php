@@ -90,11 +90,18 @@ class WSU_Custom_CSS {
 		wp_localize_script( 'jquery', 'ajax_object', $params );
 	}
 
+	/**
+	 * Checks for a valid AJAX request before allowing data to save.
+	 */
 	public function ajax_custom_css_handle_save() {
 		check_ajax_referer( 'custom_css', 'security' );
 		self::custom_css_handle_save();
 	}
 
+	/**
+	 * Handles the process of saving custom CSS through the admin and
+	 * via AJAX requests.
+	 */
 	public static function custom_css_handle_save() {
 		check_admin_referer( 'safecss' );
 
