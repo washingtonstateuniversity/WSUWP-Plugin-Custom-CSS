@@ -76,47 +76,45 @@ class WSU_Custom_CSS {
 
 		if ( !isset( $_POST['security'] ) && isset( $_POST['safecss'] ) && false == strstr( $_SERVER[ 'REQUEST_URI' ], 'options.php' ) ) {
 			self::custom_css_handle_save();
-     	}
+		}
 
 		// Modify all internal links so that preview state persists
 		if ( WSU_Custom_CSS::is_preview() ) {
 			ob_start( array( 'WSU_Custom_CSS', 'buffer' ) );
 		}
-        $params = array(
-          'ajaxurl' => admin_url('admin-ajax.php'),
-          'ajax_nonce' => wp_create_nonce('custom_css')
-        );
-        wp_enqueue_script('jquery');
-        wp_localize_script( 'jquery', 'ajax_object', $params );
+		$params = array(
+		  'ajaxurl' => admin_url('admin-ajax.php'),
+		  'ajax_nonce' => wp_create_nonce('custom_css')
+		);
+		wp_enqueue_script('jquery');
+		wp_localize_script( 'jquery', 'ajax_object', $params );
 	}
-    
-    public static function ajax_custom_css_handle_save()
-    {
-        check_ajax_referer( 'custom_css', 'security' );
-        self::custom_css_handle_save();		
-    }
-    
-    public static function custom_css_handle_save()
-    {
-        check_admin_referer( 'safecss' );
 
-        $save_result = self::save( array(
-            'css'             => stripslashes( $_POST['safecss'] ),
-            'is_preview'      => isset( $_POST['action'] ) && $_POST['action'] == 'preview',
-            'preprocessor'    => isset( $_POST['custom_css_preprocessor'] ) ? $_POST['custom_css_preprocessor'] : '',
-            'add_to_existing' => isset( $_POST['add_to_existing'] ) ? $_POST['add_to_existing'] == 'true' : true,
-            'content_width'   => isset( $_POST['custom_content_width'] ) ? $_POST['custom_content_width'] : false,
-        ) );
+	public static function ajax_custom_css_handle_save() {
+		check_ajax_referer( 'custom_css', 'security' );
+		self::custom_css_handle_save();
+	}
 
-        if ( 'preview' === $_POST['action'] ) {
-            wp_safe_redirect( add_query_arg( 'csspreview', 'true', trailingslashit( home_url() ) ) );
-            exit;
-        }
+	public static function custom_css_handle_save() {
+		check_admin_referer( 'safecss' );
 
-        if ( $save_result ) {
-            add_action( 'admin_notices', array( 'WSU_Custom_CSS', 'saved_message' ) );
-        }
-    }
+		$save_result = self::save( array(
+			'css'             => stripslashes( $_POST['safecss'] ),
+			'is_preview'      => isset( $_POST['action'] ) && $_POST['action'] == 'preview',
+			'preprocessor'    => isset( $_POST['custom_css_preprocessor'] ) ? $_POST['custom_css_preprocessor'] : '',
+			'add_to_existing' => isset( $_POST['add_to_existing'] ) ? $_POST['add_to_existing'] == 'true' : true,
+			'content_width'   => isset( $_POST['custom_content_width'] ) ? $_POST['custom_content_width'] : false,
+		) );
+
+		if ( 'preview' === $_POST['action'] ) {
+			wp_safe_redirect( add_query_arg( 'csspreview', 'true', trailingslashit( home_url() ) ) );
+			exit;
+		}
+
+		if ( $save_result ) {
+			add_action( 'admin_notices', array( 'WSU_Custom_CSS', 'saved_message' ) );
+		}
+	}
 
 	/**
 	 * Save new custom CSS. This should be the entry point for any third-party code using WSU_Custom_CSS
@@ -692,8 +690,8 @@ class WSU_Custom_CSS {
 			wp_register_script( 'jetpack-css-codemirror', plugins_url( 'js/codemirror.min.js', __FILE__ ), array(), '3.16', true );
 			wp_enqueue_script( 'jetpack-css-use-codemirror', plugins_url( 'js/use-codemirror.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
 			wp_enqueue_script( 'jetpack-css-fullscreen', plugins_url( 'js/fullscreen.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
-            wp_enqueue_script('jquery-ui-dialog');
-            wp_enqueue_style('wp-jquery-ui-dialog');
+			wp_enqueue_script('jquery-ui-dialog');
+			wp_enqueue_style('wp-jquery-ui-dialog');
 		}
 	}
 
@@ -851,7 +849,7 @@ class WSU_Custom_CSS {
 
 					?>
 					<div class="misc-pub-section">
-                        <label><?php esc_html_e( 'Preprocessor:', 'jetpack' ); ?></label>
+						<label><?php esc_html_e( 'Preprocessor:', 'jetpack' ); ?></label>
 						<span id="preprocessor-display"><?php echo esc_html( $selected_preprocessor ? $selected_preprocessor['name'] : __( 'None', 'jetpack' ) ); ?></span>
 						<a class="edit-preprocessor hide-if-no-js" href="#preprocessor"><?php echo esc_html_e( 'Edit', 'jetpack' ); ?></a>
 						<div id="preprocessor-select" class="hide-if-js">
@@ -874,7 +872,7 @@ class WSU_Custom_CSS {
 					</div>
 					<?php
 				}
-                */
+				*/
 				$safecss_post = WSU_Custom_CSS::get_current_revision();
 
 				$add_css = ( get_post_meta( $safecss_post['ID'], 'custom_css_add', true ) != 'no' );
@@ -969,7 +967,7 @@ class WSU_Custom_CSS {
 	 */
 	static function disable() {
 		remove_action( 'wp_head', array( 'WSU_Custom_CSS', 'link_tag' ), 101 );
-	    remove_filter( 'stylesheet_uri', array( 'WSU_Custom_CSS', 'style_filter' ) );
+		remove_filter( 'stylesheet_uri', array( 'WSU_Custom_CSS', 'style_filter' ) );
 	}
 
 	/**
