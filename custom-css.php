@@ -20,6 +20,8 @@ Version: 2.1.6
 class WSU_Custom_CSS {
 
 	static function init() {
+		add_action( 'wp_ajax_ajax_custom_css_handle_save', array( __CLASS__, 'ajax_custom_css_handle_save' ) );
+
 		add_action( 'wp_restore_post_revision', array( __CLASS__, 'restore_revision'   ), 10, 2 );
 
 		// Override the edit link, the default link causes a redirect loop
@@ -56,14 +58,14 @@ class WSU_Custom_CSS {
 			exit;
 		}
 
-		add_action( 'admin_enqueue_scripts', array( 'WSU_Custom_CSS', 'enqueue_scripts'       )        );
+		add_action( 'admin_enqueue_scripts', array( 'WSU_Custom_CSS', 'enqueue_scripts' ) );
 
 		$current_theme = wp_get_theme();
 
 		if ( 'spine' === $current_theme->template ) {
 			add_action( 'spine_enqueue_styles', array( 'WSU_Custom_CSS', 'link_tag' ), 10 );
 		} else {
-			add_action( 'wp_head',               array( 'WSU_Custom_CSS', 'link_tag'              ), 101   );
+			add_action( 'wp_head', array( 'WSU_Custom_CSS', 'link_tag' ), 101 );
 		}
 
 		if ( !current_user_can( 'switch_themes' ) && !is_super_admin() ) {
@@ -72,30 +74,52 @@ class WSU_Custom_CSS {
 
 		add_action( 'admin_menu', array( 'WSU_Custom_CSS', 'menu' ) );
 
-		if ( isset( $_POST['safecss'] ) && false == strstr( $_SERVER[ 'REQUEST_URI' ], 'options.php' ) ) {
-			check_admin_referer( 'safecss' );
-
-			$save_result = self::save( array(
-				'css'             => stripslashes( $_POST['safecss'] ),
-				'is_preview'      => isset( $_POST['action'] ) && $_POST['action'] == 'preview',
-				'preprocessor'    => isset( $_POST['custom_css_preprocessor'] ) ? $_POST['custom_css_preprocessor'] : '',
-				'add_to_existing' => isset( $_POST['add_to_existing'] ) ? $_POST['add_to_existing'] == 'true' : true,
-				'content_width'   => isset( $_POST['custom_content_width'] ) ? $_POST['custom_content_width'] : false,
-			) );
-
-			if ( 'preview' === $_POST['action'] ) {
-				wp_safe_redirect( add_query_arg( 'csspreview', 'true', trailingslashit( home_url() ) ) );
-				exit;
-			}
-
-			if ( $save_result ) {
-				add_action( 'admin_notices', array( 'WSU_Custom_CSS', 'saved_message' ) );
-			}
+		if ( !isset( $_POST['security'] ) && isset( $_POST['safecss'] ) && false == strstr( $_SERVER[ 'REQUEST_URI' ], 'options.php' ) ) {
+			self::custom_css_handle_save();
 		}
 
 		// Modify all internal links so that preview state persists
 		if ( WSU_Custom_CSS::is_preview() ) {
 			ob_start( array( 'WSU_Custom_CSS', 'buffer' ) );
+		}
+		$params = array(
+		  'ajaxurl' => admin_url('admin-ajax.php'),
+		  'ajax_nonce' => wp_create_nonce('custom_css')
+		);
+		wp_enqueue_script('jquery');
+		wp_localize_script( 'jquery', 'ajax_object', $params );
+	}
+
+	/**
+	 * Checks for a valid AJAX request before allowing data to save.
+	 */
+	public function ajax_custom_css_handle_save() {
+		check_ajax_referer( 'custom_css', 'security' );
+		self::custom_css_handle_save();
+	}
+
+	/**
+	 * Handles the process of saving custom CSS through the admin and
+	 * via AJAX requests.
+	 */
+	public static function custom_css_handle_save() {
+		check_admin_referer( 'safecss' );
+
+		$save_result = self::save( array(
+			'css'             => stripslashes( $_POST['safecss'] ),
+			'is_preview'      => isset( $_POST['action'] ) && $_POST['action'] == 'preview',
+			'preprocessor'    => isset( $_POST['custom_css_preprocessor'] ) ? $_POST['custom_css_preprocessor'] : '',
+			'add_to_existing' => isset( $_POST['add_to_existing'] ) ? $_POST['add_to_existing'] == 'true' : true,
+			'content_width'   => isset( $_POST['custom_content_width'] ) ? $_POST['custom_content_width'] : false,
+		) );
+
+		if ( 'preview' === $_POST['action'] ) {
+			wp_safe_redirect( add_query_arg( 'csspreview', 'true', trailingslashit( home_url() ) ) );
+			exit;
+		}
+
+		if ( $save_result ) {
+			add_action( 'admin_notices', array( 'WSU_Custom_CSS', 'saved_message' ) );
 		}
 	}
 
@@ -672,6 +696,9 @@ class WSU_Custom_CSS {
 
 			wp_register_script( 'jetpack-css-codemirror', plugins_url( 'js/codemirror.min.js', __FILE__ ), array(), '3.16', true );
 			wp_enqueue_script( 'jetpack-css-use-codemirror', plugins_url( 'js/use-codemirror.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script( 'jetpack-css-fullscreen', plugins_url( 'js/fullscreen.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script('jquery-ui-dialog');
+			wp_enqueue_style('wp-jquery-ui-dialog');
 		}
 	}
 
@@ -821,7 +848,7 @@ class WSU_Custom_CSS {
 				<?php
 
 				$preprocessors = apply_filters( 'wsu_custom_css_preprocessors', array() );
-
+/*
 				if ( ! empty( $preprocessors ) ) {
 					$safecss_post = WSU_Custom_CSS::get_current_revision();
 					$selected_preprocessor_key = get_post_meta( $safecss_post['ID'], 'custom_css_preprocessor', true );
@@ -852,7 +879,7 @@ class WSU_Custom_CSS {
 					</div>
 					<?php
 				}
-
+				*/
 				$safecss_post = WSU_Custom_CSS::get_current_revision();
 
 				$add_css = ( get_post_meta( $safecss_post['ID'], 'custom_css_add', true ) != 'no' );
@@ -902,7 +929,7 @@ class WSU_Custom_CSS {
 	static function revisions_meta_box( $safecss_post ) {
 
 		$show_all_revisions = isset( $_GET['show_all_rev'] );
-		
+
 		$max_revisions = defined( 'WP_POST_REVISIONS' ) && is_numeric( WP_POST_REVISIONS ) ? (int) WP_POST_REVISIONS : 25;
 
 		$posts_per_page = $show_all_revisions ? $max_revisions : 6;
@@ -947,7 +974,7 @@ class WSU_Custom_CSS {
 	 */
 	static function disable() {
 		remove_action( 'wp_head', array( 'WSU_Custom_CSS', 'link_tag' ), 101 );
-	    remove_filter( 'stylesheet_uri', array( 'WSU_Custom_CSS', 'style_filter' ) );
+		remove_filter( 'stylesheet_uri', array( 'WSU_Custom_CSS', 'style_filter' ) );
 	}
 
 	/**
