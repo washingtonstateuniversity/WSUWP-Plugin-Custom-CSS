@@ -7,7 +7,6 @@ Author: washingtonstateuniversity, jeremyfelt, automattic
 Version: 2.1.6
 */
 
-add_action( 'wp_ajax_nopriv_ajax_custom_css_handle_save', 'WSU_Custom_CSS::ajax_custom_css_handle_save' );
 add_action( 'wp_ajax_ajax_custom_css_handle_save', 'WSU_Custom_CSS::ajax_custom_css_handle_save' );
 
 /**
