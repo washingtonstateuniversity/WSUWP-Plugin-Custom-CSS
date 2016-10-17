@@ -182,7 +182,8 @@ class WSU_Custom_CSS {
 
 		$css = $orig = $args['css'];
 
-		$css = preg_replace( '/\\\\([0-9a-fA-F]{4})/', '\\\\\\\\$1', $prev = $css );
+		// prevent content: '\3434' from turning into '\\3434'
+		$css = str_replace( array( '\'\\\\', '"\\\\' ), array( '\'\\', '"\\' ), $css );
 
 		if ( $css != $prev ) {
 			$warnings[] = 'preg_replace found stuff';
@@ -359,11 +360,11 @@ class WSU_Custom_CSS {
 			}
 
 			$post = array();
-			$post['post_content'] = $css;
+			$post['post_content'] = wp_slash( $css );
 			$post['post_title'] = 'safecss';
 			$post['post_status'] = 'publish';
 			$post['post_type'] = 'safecss';
-			$post['post_content_filtered'] = $compressed_css;
+			$post['post_content_filtered'] = wp_slash( $compressed_css );
 
 			// Set excerpt to current theme, for display in revisions list
 			$current_theme = wp_get_theme();
@@ -391,6 +392,8 @@ class WSU_Custom_CSS {
 
 		// Do not update post if we are only saving a preview
 		if ( false === $is_preview ) {
+			$safecss_post['post_content'] = wp_slash( $safecss_post['post_content'] );
+			$safecss_post['post_content_filtered'] = wp_slash( $safecss_post['post_content_filtered'] );
 			$post_id = wp_update_post( $safecss_post );
 			wp_cache_set( 'custom_css_post_id', $post_id );
 			return $post_id;
@@ -466,7 +469,6 @@ class WSU_Custom_CSS {
 		else if ( 'safecss_preview' == $option ) {
 			$safecss_post = WSU_Custom_CSS::get_current_revision();
 			$css = $safecss_post['post_content'];
-			$css = stripslashes( $css );
 			$css = WSU_Custom_CSS::minify( $css, get_post_meta( $safecss_post['ID'], 'custom_css_preprocessor', true ) );
 		}
 
@@ -712,7 +714,7 @@ class WSU_Custom_CSS {
 
 		$safecss_post = WSU_Custom_CSS::get_post();
 
-		if ( ! empty( $safecss_post ) && 0 < $safecss_post['ID'] && wp_get_post_revisions( $safecss_post['ID'] ) ) {
+		if ( ! empty( $safecss_post ) && 0 < $safecss_post['ID'] && wp_get_post_revisions( $safecss_post['ID'], array( 'posts_per_page' => 1 ) ) ) {
 			add_meta_box( 'revisionsdiv', __( 'CSS Revisions', 'jetpack' ), array( __CLASS__, 'revisions_meta_box' ), 'editcss', 'side' );
 		}
 
