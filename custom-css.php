@@ -108,7 +108,6 @@ class WSU_Custom_CSS {
 		$save_result = self::save( array(
 			'css'             => stripslashes( $_POST['safecss'] ),
 			'is_preview'      => isset( $_POST['action'] ) && $_POST['action'] == 'preview',
-			'preprocessor'    => isset( $_POST['custom_css_preprocessor'] ) ? $_POST['custom_css_preprocessor'] : '',
 			'add_to_existing' => isset( $_POST['add_to_existing'] ) ? $_POST['add_to_existing'] == 'true' : true,
 			'content_width'   => isset( $_POST['custom_content_width'] ) ? $_POST['custom_content_width'] : false,
 		) );
@@ -132,7 +131,6 @@ class WSU_Custom_CSS {
 	 *
 	 *     @type string $css             The CSS (or LESS or Sass)
 	 *     @type bool   $is_preview      Whether this CSS is preview or published
-	 *     @type string $preprocessor    Which CSS preprocessor to use
 	 *     @type bool   $add_to_existing Whether this CSS replaces the theme's CSS or supplements it.
 	 *     @type int    $content_width   A custom $content_width to go along with this CSS.
 	 * }
@@ -143,7 +141,6 @@ class WSU_Custom_CSS {
 		$defaults = array(
 			'css' => '',
 			'is_preview' => false,
-			'preprocessor' => '',
 			'add_to_existing' => true,
 			'content_width' => false,
 		);
@@ -200,16 +197,14 @@ class WSU_Custom_CSS {
 			$warnings[] = 'kses found stuff';
 		}
 
-		// if we're not using a preprocessor
-		if ( ! $args['preprocessor'] ) {
-			do_action( 'safecss_parse_pre', $csstidy, $css, $args );
 
-			$csstidy->parse( $css );
+		do_action( 'safecss_parse_pre', $csstidy, $css, $args );
 
-			do_action( 'safecss_parse_post', $csstidy, $warnings, $args );
+		$csstidy->parse( $css );
 
-			$css = $csstidy->print->plain();
-		}
+		do_action( 'safecss_parse_post', $csstidy, $warnings, $args );
+
+		$css = $csstidy->print->plain();
 
 		if ( $args['add_to_existing'] ) {
 			$add_to_existing = 'yes';
@@ -219,14 +214,13 @@ class WSU_Custom_CSS {
 
 		if ( $args['is_preview'] ) {
 			// Save the CSS
-			$safecss_revision_id = WSU_Custom_CSS::save_revision( $css, true, $args['preprocessor'] );
+			$safecss_revision_id = WSU_Custom_CSS::save_revision( $css, true );
 
 			// Cache Buster
 			update_option( 'safecss_preview_rev', intval( get_option( 'safecss_preview_rev' ) ) + 1);
 
 			update_metadata( 'post', $safecss_revision_id, 'custom_css_add', $add_to_existing );
 			update_metadata( 'post', $safecss_revision_id, 'content_width', $args['content_width'] );
-			update_metadata( 'post', $safecss_revision_id, 'custom_css_preprocessor', $args['preprocessor'] );
 
 			delete_option( 'safecss_add' );
 			delete_option( 'safecss_content_width' );
@@ -239,7 +233,7 @@ class WSU_Custom_CSS {
 		}
 
 		// Save the CSS
-		$safecss_post_id = WSU_Custom_CSS::save_revision( $css, false, $args['preprocessor'] );
+		$safecss_post_id = WSU_Custom_CSS::save_revision( $css, false );
 
 		$safecss_post_revision = WSU_Custom_CSS::get_current_revision();
 
@@ -247,14 +241,12 @@ class WSU_Custom_CSS {
 
 		update_post_meta( $safecss_post_id, 'custom_css_add', $add_to_existing );
 		update_post_meta( $safecss_post_id, 'content_width', $args['content_width'] );
-		update_post_meta( $safecss_post_id, 'custom_css_preprocessor', $args['preprocessor'] );
 
 		delete_option( 'safecss_add' );
 		delete_option( 'safecss_content_width' );
 
 		update_metadata( 'post', $safecss_post_revision['ID'], 'custom_css_add', $add_to_existing );
 		update_metadata( 'post', $safecss_post_revision['ID'], 'content_width', $args['content_width'] );
-		update_metadata( 'post', $safecss_post_revision['ID'], 'custom_css_preprocessor', $args['preprocessor'] );
 
 		delete_option( 'safecss_preview_add' );
 
@@ -343,14 +335,13 @@ class WSU_Custom_CSS {
 	 *
 	 * @param string $css
 	 * @param bool   $is_preview
-	 * @param string $preprocessor
 	 *
 	 * @return bool|int False if nothing saved. Post ID if a post or revision was saved.
 	 */
-	static function save_revision( $css, $is_preview = false, $preprocessor = '' ) {
+	static function save_revision( $css, $is_preview = false ) {
 		$safecss_post = WSU_Custom_CSS::get_post();
 
-		$compressed_css = WSU_Custom_CSS::minify( $css, $preprocessor );
+		$compressed_css = WSU_Custom_CSS::minify( $css );
 
 		// If null, there was no original safecss record, so create one
 		if ( null == $safecss_post ) {
@@ -467,7 +458,7 @@ class WSU_Custom_CSS {
 			$safecss_post = WSU_Custom_CSS::get_current_revision();
 			$css = $safecss_post['post_content'];
 			$css = stripslashes( $css );
-			$css = WSU_Custom_CSS::minify( $css, get_post_meta( $safecss_post['ID'], 'custom_css_preprocessor', true ) );
+			$css = WSU_Custom_CSS::minify( $css );
 		}
 
 		$css = str_replace( array( '\\\00BB \\\0020', '\0BB \020', '0BB 020' ), '\00BB \0020', $css );
@@ -847,39 +838,6 @@ class WSU_Custom_CSS {
 			<div id="misc-publishing-actions">
 				<?php
 
-				$preprocessors = apply_filters( 'wsu_custom_css_preprocessors', array() );
-/*
-				if ( ! empty( $preprocessors ) ) {
-					$safecss_post = WSU_Custom_CSS::get_current_revision();
-					$selected_preprocessor_key = get_post_meta( $safecss_post['ID'], 'custom_css_preprocessor', true );
-					$selected_preprocessor = isset( $preprocessors[$selected_preprocessor_key] ) ? $preprocessors[$selected_preprocessor_key] : null;
-
-					?>
-					<div class="misc-pub-section">
-						<label><?php esc_html_e( 'Preprocessor:', 'jetpack' ); ?></label>
-						<span id="preprocessor-display"><?php echo esc_html( $selected_preprocessor ? $selected_preprocessor['name'] : __( 'None', 'jetpack' ) ); ?></span>
-						<a class="edit-preprocessor hide-if-no-js" href="#preprocessor"><?php echo esc_html_e( 'Edit', 'jetpack' ); ?></a>
-						<div id="preprocessor-select" class="hide-if-js">
-							<input type="hidden" name="custom_css_preprocessor" id="custom_css_preprocessor" value="<?php echo esc_attr( $selected_preprocessor_key ); ?>" />
-							<select id="preprocessor_choices">
-								<option value=""><?php esc_html_e( 'None', 'jetpack' ); ?></option>
-								<?php
-
-								foreach ( $preprocessors as $preprocessor_key => $preprocessor ) {
-								?>
-									<option value="<?php echo esc_attr( $preprocessor_key ); ?>" <?php selected( $selected_preprocessor_key, $preprocessor_key ); ?>><?php echo esc_html( $preprocessor['name'] ); ?></option>
-									<?php
-								}
-
-								?>
-							</select>
-							<a class="save-preprocessor hide-if-no-js button" href="#preprocessor"><?php esc_html_e( 'OK', 'jetpack' ); ?></a>
-							<a class="cancel-preprocessor hide-if-no-js" href="#preprocessor"><?php esc_html_e( 'Cancel', 'jetpack' ); ?></a>
-						</div>
-					</div>
-					<?php
-				}
-				*/
 				$safecss_post = WSU_Custom_CSS::get_current_revision();
 
 				$add_css = ( get_post_meta( $safecss_post['ID'], 'custom_css_add', true ) != 'no' );
@@ -989,14 +947,12 @@ class WSU_Custom_CSS {
 
 		update_post_meta( $safecss_post_id, 'custom_css_add', 'yes' );
 		update_post_meta( $safecss_post_id, 'content_width', false );
-		update_post_meta( $safecss_post_id, 'custom_css_preprocessor', '' );
 
 		delete_option( 'safecss_add' );
 		delete_option( 'safecss_content_width' );
 
 		update_metadata( 'post', $safecss_revision['ID'], 'custom_css_add', 'yes' );
 		update_metadata( 'post', $safecss_revision['ID'], 'content_width', false );
-		update_metadata( 'post', $safecss_revision['ID'], 'custom_css_preprocessor', '' );
 
 		delete_option( 'safecss_preview_add' );
 	}
@@ -1009,17 +965,9 @@ class WSU_Custom_CSS {
 		return false;
 	}
 
-	static function minify( $css, $preprocessor = '' ) {
+	static function minify( $css ) {
 		if ( ! $css ) {
 			return '';
-		}
-
-		if ( $preprocessor ) {
-			$preprocessors = apply_filters( 'wsu_custom_css_preprocessors', array() );
-
-			if ( isset( $preprocessors[$preprocessor] ) ) {
-				$css = call_user_func( $preprocessors[$preprocessor]['callback'], $css );
-			}
 		}
 
 		safecss_class();
@@ -1054,18 +1002,15 @@ class WSU_Custom_CSS {
 
 		$content_width = get_post_meta( $_revision_id, 'content_width', true );
 		$custom_css_add = get_post_meta( $_revision_id, 'custom_css_add', true );
-		$preprocessor = get_post_meta( $_revision_id, 'custom_css_preprocessor', true );
 
 		update_metadata( 'post', $safecss_revision['ID'], 'content_width', $content_width );
 		update_metadata( 'post', $safecss_revision['ID'], 'custom_css_add', $custom_css_add );
-		update_metadata( 'post', $safecss_revision['ID'], 'custom_css_preprocessor', $preprocessor );
 
 		delete_option( 'safecss_add' );
 		delete_option( 'safecss_content_width' );
 
 		update_post_meta( $_post->ID, 'content_width', $content_width );
 		update_post_meta( $_post->ID, 'custom_css_add', $custom_css_add );
-		update_post_meta( $_post->ID, 'custom_css_preprocessor', $preprocessor );
 
 		delete_option( 'safecss_preview_add' );
 	}
@@ -1184,5 +1129,3 @@ if ( ! function_exists( 'safecss_filter_attr' ) ) {
 }
 
 add_action( 'init', array( 'WSU_Custom_CSS', 'init' ) );
-
-include dirname( __FILE__ ) . '/preprocessors.php';
