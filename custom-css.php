@@ -7,8 +7,6 @@ Author: washingtonstateuniversity, jeremyfelt, automattic
 Version: 2.1.6
 */
 
-add_action( 'wp_ajax_ajax_custom_css_handle_save', 'WSU_Custom_CSS::ajax_custom_css_handle_save' );
-
 /**
  * The following is a fork of the custom CSS module included with Automattic's Jetpack plugin. The
  * weight of the full plugin was too much for our needs and we need to opt out of sending full
@@ -22,6 +20,8 @@ add_action( 'wp_ajax_ajax_custom_css_handle_save', 'WSU_Custom_CSS::ajax_custom_
 class WSU_Custom_CSS {
 
 	static function init() {
+		add_action( 'wp_ajax_ajax_custom_css_handle_save', array( __CLASS__, 'ajax_custom_css_handle_save' ) );
+
 		add_action( 'wp_restore_post_revision', array( __CLASS__, 'restore_revision'   ), 10, 2 );
 
 		// Override the edit link, the default link causes a redirect loop
@@ -90,7 +90,7 @@ class WSU_Custom_CSS {
 		wp_localize_script( 'jquery', 'ajax_object', $params );
 	}
 
-	public static function ajax_custom_css_handle_save() {
+	public function ajax_custom_css_handle_save() {
 		check_ajax_referer( 'custom_css', 'security' );
 		self::custom_css_handle_save();
 	}
