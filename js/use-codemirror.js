@@ -60,17 +60,13 @@
 			this.editor.on( 'change', _.bind( function( editor ){
 				this.$textarea.val( editor.getValue() );
 			}, this ) );
-			// change mode
-			$( '#preprocessor_choices' ).change( _.bind( function(){
-				this.editor.setOption( 'mode', this.getMode() );
-			}, this ) );
 		},
 		setEditorHeight: function() {
 			var height = $('html').height() - $( this.editor.getWrapperElement() ).offset().top;
 			this.editor.setSize( null, height );
 		},
 		getMode: function() {
-			var mode = $( '#preprocessor_choices' ).val();
+			var mode = '';
 			if ( '' === mode || ! this.modes[ mode ] ) {
 				mode = 'default';
 			}

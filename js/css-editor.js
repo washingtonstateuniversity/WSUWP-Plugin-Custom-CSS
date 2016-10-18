@@ -32,31 +32,6 @@
 } )( jQuery );
 
 jQuery( function ( $ ) {
-	$( '.edit-preprocessor' ).bind( 'click', function ( e ) {
-		e.preventDefault();
-
-		$( '#preprocessor-select' ).slideDown();
-		$( this ).hide();
-	} );
-
-	$( '.cancel-preprocessor' ).bind( 'click', function ( e ) {
-		e.preventDefault();
-
-		$( '#preprocessor-select' ).slideUp( function () {
-			$( '.edit-preprocessor' ).show();
-			$( '#preprocessor_choices' ).val( $( '#custom_css_preprocessor' ).val() );
-		} );
-	} );
-
-	$( '.save-preprocessor' ).bind( 'click', function ( e ) {
-		e.preventDefault();
-
-		$( '#preprocessor-select' ).slideUp();
-		$( '#preprocessor-display' ).text( $( '#preprocessor_choices option:selected' ).text() );
-		$( '#custom_css_preprocessor' ).val( $( '#preprocessor_choices' ).val() ).change();
-		$( '.edit-preprocessor' ).show();
-	} );
-
 	$( '.edit-css-mode' ).bind( 'click', function ( e ) {
 		e.preventDefault();
 
