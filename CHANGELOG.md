@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.2.0 (October 18, 2016)
+
+* Add AJAX saving with `cmd-s` or `ctrl-s` in the CSS editor.
+* Add full screen support via Code Mirror.
+* Add support for multiple, browser prefixed, `display` properties.
+* Add support for `font-feature-settings` property.
+* Update `csstidy` constructors for PHP7 compatibility.
+* Remove all (unused) preprocessor handling.
+* Update slash handling to match upstream project.
+
 ## 2.1.6 (March 1, 2016)
 
 * Remove unused WP.com hook.
