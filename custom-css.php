@@ -1104,9 +1104,6 @@ function safecss_class() {
 	require_once( dirname( __FILE__ ) . '/csstidy/class.csstidy.php' );
 
 	class safecss extends csstidy_optimise {
-		function __construct( &$css ) {
-			return $this->csstidy_optimise( $css );
-		}
 
 		function postparse() {
 			do_action( 'csstidy_optimize_postparse', $this );
