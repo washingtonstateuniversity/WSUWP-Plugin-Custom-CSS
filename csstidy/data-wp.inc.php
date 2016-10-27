@@ -77,6 +77,7 @@ $GLOBALS['csstidy']['all_properties']['-webkit-transform-origin-x'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['-webkit-transform-origin-y'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['-webkit-transform-origin-z'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['-webkit-font-smoothing'] = 'CSS3.0';
+$GLOBALS['csstidy']['all_properties']['-webkit-text-fill-color'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['-moz-osx-font-smoothing'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['-font-smooth'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['-o-object-fit'] = 'CSS3.0';

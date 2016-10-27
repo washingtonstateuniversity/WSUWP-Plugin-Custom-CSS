@@ -687,10 +687,21 @@ class WSU_Custom_CSS {
 		if ( defined( 'SAFECSS_USE_ACE' ) && SAFECSS_USE_ACE ) {
 			wp_register_style( 'jetpack-css-codemirror', plugins_url( 'css/codemirror.css', __FILE__ ), array(), '20120905' );
 			wp_enqueue_style( 'jetpack-css-use-codemirror', plugins_url( 'css/use-codemirror.css', __FILE__ ), array( 'jetpack-css-codemirror' ), '20120905' );
+			wp_enqueue_style( 'jetpack-css-use-codemirrordialog', plugins_url( 'css/dialog.css', __FILE__ ), array( 'jetpack-css-codemirror' ), '20120905' );
+			wp_enqueue_style( 'jetpack-css-use-codemirrormatchesonscrollbar', plugins_url( 'css/matchesonscrollbar.css', __FILE__ ), array( 'jetpack-css-codemirror' ), '20120905' );
 
 			wp_register_script( 'jetpack-css-codemirror', plugins_url( 'js/codemirror.min.js', __FILE__ ), array(), '3.16', true );
 			wp_enqueue_script( 'jetpack-css-use-codemirror', plugins_url( 'js/use-codemirror.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+
 			wp_enqueue_script( 'jetpack-css-fullscreen', plugins_url( 'js/fullscreen.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script( 'jetpack-css-xmls', plugins_url( 'js/xml.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script( 'jetpack-css-dialog', plugins_url( 'js/dialog.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script( 'jetpack-css-searchcursor', plugins_url( 'js/searchcursor.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script( 'jetpack-css-search', plugins_url( 'js/search.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script( 'jetpack-css-annotatescrollbar', plugins_url( 'js/annotatescrollbar.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script( 'jetpack-css-matchesonscrollbar', plugins_url( 'js/matchesonscrollbar.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_enqueue_script( 'jetpack-css-jump-to-line', plugins_url( 'js/jump-to-line.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+
 			wp_enqueue_script('jquery-ui-dialog');
 			wp_enqueue_style('wp-jquery-ui-dialog');
 		}
@@ -708,6 +719,7 @@ class WSU_Custom_CSS {
 
 		if ( ! empty( $safecss_post ) && 0 < $safecss_post['ID'] && wp_get_post_revisions( $safecss_post['ID'] ) ) {
 			add_meta_box( 'revisionsdiv', __( 'CSS Revisions', 'jetpack' ), array( __CLASS__, 'revisions_meta_box' ), 'editcss', 'side' );
+			add_meta_box( 'helpdiv', __( 'Help', 'jetpack' ), array( __CLASS__, 'help_meta_box' ), 'editcss', 'side' );
 		}
 
 		?>
@@ -928,6 +940,31 @@ class WSU_Custom_CSS {
 		}
 
 		wp_reset_query();
+	}
+
+	/**
+	 * Render help metabox 
+	 * Called by safecss_admin
+	 *
+	 * @param array 
+	 *
+	 * @return string
+	 */
+	static function help_meta_box(  ) {
+		?>
+<dl>
+	  <dt>Ctrl-S / Cmd-S</dt><dd>Save without leaving page.</dd>
+	  <dt>Esc</dt><dd>Fullscreen enter/exit</dd>
+	  <dt>Ctrl-F / Cmd-F</dt><dd>Start searching</dd>
+	  <dt>Ctrl-G / Cmd-G</dt><dd>Find next</dd>
+	  <dt>Shift-Ctrl-G / Shift-Cmd-G</dt><dd>Find previous</dd>
+	  <dt>Shift-Ctrl-F / Cmd-Option-F</dt><dd>Replace</dd>
+	  <dt>Shift-Ctrl-R / Shift-Cmd-Option-F</dt><dd>Replace all</dd>
+	  <dt>Alt-F</dt><dd>Persistent search (dialog doesn't autoclose,
+	  enter to find next, Shift-Enter to find previous)</dd>
+	  <dt>Alt-G / Cmd-L</dt><dd>Jump to line</dd>
+	</dl>
+		<?php
 	}
 
 	/**
