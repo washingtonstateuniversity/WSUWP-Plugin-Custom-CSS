@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.1 (October 27, 2016)
+
+* Add support for CodeMirror search, jump to line, etc...
+* Add help box with keyboard shortcut guide.
+* Add support for `-webkit-text-fill-color`.
+
 ## 2.2.0 (October 18, 2016)
 
 * Add AJAX saving with `cmd-s` or `ctrl-s` in the CSS editor.
