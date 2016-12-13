@@ -162,9 +162,9 @@ class WSU_Custom_CSS {
 
 		$warnings = array();
 
-		safecss_class();
+		wsu_safecss_class();
 		$csstidy = new csstidy();
-		$csstidy->optimise = new safecss( $csstidy );
+		$csstidy->optimise = new wsu_safecss( $csstidy );
 
 		$csstidy->set_cfg( 'remove_bslash',              false );
 		$csstidy->set_cfg( 'compress_colors',            false );
@@ -1010,9 +1010,9 @@ class WSU_Custom_CSS {
 			return '';
 		}
 
-		safecss_class();
+		wsu_safecss_class();
 		$csstidy = new csstidy();
-		$csstidy->optimise = new safecss( $csstidy );
+		$csstidy->optimise = new wsu_safecss( $csstidy );
 
 		$csstidy->set_cfg( 'remove_bslash',              false );
 		$csstidy->set_cfg( 'compress_colors',            true );
@@ -1103,12 +1103,12 @@ class WSU_Custom_CSS {
 
 class WSU_Safe_CSS {
 	static function filter_attr( $css, $element = 'div' ) {
-		safecss_class();
+		wsu_safecss_class();
 
 		$css = $element . ' {' . $css . '}';
 
 		$csstidy = new csstidy();
-		$csstidy->optimise = new safecss( $csstidy );
+		$csstidy->optimise = new wsu_safecss( $csstidy );
 		$csstidy->set_cfg( 'remove_bslash', false );
 		$csstidy->set_cfg( 'compress_colors', false );
 		$csstidy->set_cfg( 'compress_font-weight', false );
@@ -1135,15 +1135,15 @@ class WSU_Safe_CSS {
 	}
 }
 
-function safecss_class() {
+function wsu_safecss_class() {
 	// Wrapped so we don't need the parent class just to load the plugin
-	if ( class_exists('safecss') ) {
+	if ( class_exists('wsu_safecss') ) {
 		return;
 	}
 
 	require_once( dirname( __FILE__ ) . '/csstidy/class.csstidy.php' );
 
-	class safecss extends csstidy_optimise {
+	class wsu_safecss extends csstidy_optimise {
 
 		function postparse() {
 			do_action( 'csstidy_optimize_postparse', $this );
