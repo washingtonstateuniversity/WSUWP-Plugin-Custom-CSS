@@ -64,13 +64,6 @@
 		setEditorHeight: function() {
 			var height = $('html').height() - $( this.editor.getWrapperElement() ).offset().top;
 			this.editor.setSize( null, height );
-		},
-		getMode: function() {
-			var mode = '';
-			if ( '' === mode || ! this.modes[ mode ] ) {
-				mode = 'default';
-			}
-			return this.modes[ mode ];
 		}
 	};
 
