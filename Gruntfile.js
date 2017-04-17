@@ -14,6 +14,9 @@ module.exports = function( grunt ) {
 
 		uglify: {
 			code_mirror: {
+				options: {
+					banner: '// CodeMirror 5.25.0 - MIT Licensed - https://github.com/codemirror/CodeMirror - Includes CSS module.'
+				},
 				src: "src/js/codemirror-temp.js",
 				dest: "js/codemirror.min.js"
 			}
