@@ -2,11 +2,6 @@
 
 (function($){
 	var WSU_CSS = {
-		modes: {
-			'default': 'text/css',
-			'less': 'text/x-less',
-			'sass': 'text/x-scss'
-		},
 		ajaxSaveCSS: function(){
             jQuery("#message").remove();
             jQuery('<div id="message" class="updated fade"><p><strong><div class="customcsspreloader"></div> Saving...</strong></p></div>').insertBefore("form");
@@ -28,7 +23,7 @@
 		init: function() {
 			this.$textarea = $( '#safecss' );
 			this.editor = window.CodeMirror.fromTextArea( this.$textarea.get(0),{
-				mode: this.getMode(),
+				mode: 'css',
 				extraKeys: {
 					"Esc": function(cm) {
                         var fullscreen = cm.getOption("fullScreen");
@@ -46,7 +41,7 @@
 					"Cmd-S": function(instance) { WSU_CSS.ajaxSaveCSS(); }
 				  },
 				lineNumbers: true,
-				tabSize: 2,
+				tabSize: 4,
 				indentWithTabs: true,
 				lineWrapping: true
 			});
@@ -64,13 +59,6 @@
 		setEditorHeight: function() {
 			var height = $('html').height() - $( this.editor.getWrapperElement() ).offset().top;
 			this.editor.setSize( null, height );
-		},
-		getMode: function() {
-			var mode = '';
-			if ( '' === mode || ! this.modes[ mode ] ) {
-				mode = 'default';
-			}
-			return this.modes[ mode ];
 		}
 	};
 
