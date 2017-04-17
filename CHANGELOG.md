@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.0 (April 17, 2017)
+
+* Update CodeMirror 5.25.0
+* Reorganize repository to make future library upgrades easier.
+
 ## 2.2.1 (October 27, 2016)
 
 * Add support for CodeMirror search, jump to line, etc...
