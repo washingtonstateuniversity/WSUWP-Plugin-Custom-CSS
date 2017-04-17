@@ -4,7 +4,7 @@ Plugin Name: WSU Custom CSS
 Plugin URI: https://web.wsu.edu/
 Description: Custom CSS via custom post type.
 Author: washingtonstateuniversity, jeremyfelt, automattic
-Version: 2.3.0
+Version: 2.3.1
 */
 
 /**
@@ -685,13 +685,13 @@ class WSU_Custom_CSS {
 		wp_enqueue_style( 'custom-css-editor', plugins_url( 'css/css-editor.css', __FILE__ ) );
 
 		if ( defined( 'SAFECSS_USE_ACE' ) && SAFECSS_USE_ACE ) {
-			wp_register_style( 'jetpack-css-codemirror', plugins_url( 'css/codemirror.css', __FILE__ ), array(), '20120905' );
+			wp_register_style( 'jetpack-css-codemirror', plugins_url( 'css/codemirror.css', __FILE__ ), array(), '20170417' );
 			wp_enqueue_style( 'jetpack-css-use-codemirror', plugins_url( 'css/use-codemirror.css', __FILE__ ), array( 'jetpack-css-codemirror' ), '20120905' );
 			wp_enqueue_style( 'jetpack-css-use-codemirrordialog', plugins_url( 'css/dialog.css', __FILE__ ), array( 'jetpack-css-codemirror' ), '20120905' );
 			wp_enqueue_style( 'jetpack-css-use-codemirrormatchesonscrollbar', plugins_url( 'css/matchesonscrollbar.css', __FILE__ ), array( 'jetpack-css-codemirror' ), '20120905' );
 
-			wp_register_script( 'jetpack-css-codemirror', plugins_url( 'js/codemirror.min.js', __FILE__ ), array(), '3.16', true );
-			wp_enqueue_script( 'jetpack-css-use-codemirror', plugins_url( 'js/use-codemirror.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
+			wp_register_script( 'jetpack-css-codemirror', plugins_url( 'js/codemirror.min.js', __FILE__ ), array(), '20170417', true );
+			wp_enqueue_script( 'jetpack-css-use-codemirror', plugins_url( 'js/use-codemirror.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20170417', true );
 
 			wp_enqueue_script( 'jetpack-css-fullscreen', plugins_url( 'js/fullscreen.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
 			wp_enqueue_script( 'jetpack-css-xmls', plugins_url( 'js/xml.js', __FILE__ ), array( 'jquery', 'underscore', 'jetpack-css-codemirror' ), '20131009', true );
