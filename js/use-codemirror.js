@@ -28,7 +28,7 @@
 		init: function() {
 			this.$textarea = $( '#safecss' );
 			this.editor = window.CodeMirror.fromTextArea( this.$textarea.get(0),{
-				mode: this.getMode(),
+				mode: 'css',
 				extraKeys: {
 					"Esc": function(cm) {
                         var fullscreen = cm.getOption("fullScreen");
@@ -46,7 +46,7 @@
 					"Cmd-S": function(instance) { WSU_CSS.ajaxSaveCSS(); }
 				  },
 				lineNumbers: true,
-				tabSize: 2,
+				tabSize: 4,
 				indentWithTabs: true,
 				lineWrapping: true
 			});
