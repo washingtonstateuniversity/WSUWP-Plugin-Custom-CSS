@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.1 (April 17, 2017)
+
+* Bust cache on enqueued styles and scripts.
+
 ## 2.3.0 (April 17, 2017)
 
 * Update CodeMirror 5.25.0
