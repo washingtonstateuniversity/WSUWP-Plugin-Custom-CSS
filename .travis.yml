@@ -37,31 +37,12 @@ matrix:
       env: WP_TRAVISCI=travis:grunt
 
 before_script:
-    - |
-      # Remove Xdebug for a huge performance increase, but not from nightly or hhvm:
-      stable='^[0-9\.]+$'
-      if [[ "$TRAVIS_PHP_VERSION" =~ $stable ]]; then
-        phpenv config-rm xdebug.ini
-      fi
-    - |
-      # Export Composer's global bin dir to PATH, but not on PHP 5.2:
-      if [[ ${TRAVIS_PHP_VERSION:0:3} != "5.2" ]]; then
-        composer config --list --global
-        export PATH=`composer config --list --global | grep '\[home\]' | { read a; echo "${a#* }/vendor/bin:$PATH"; }`
-      fi
-    - |
-      if [[ "$WP_TRAVISCI" == "travis:grunt" ]]; then
-        composer install
-      fi
     - npm --version
     - node --version
     - nvm install stable
     - npm install -g grunt-cli
     - npm install
     - npm prune
-    - mysql --version
-    - phpenv versions
-    - php --version
     - npm --version
     - node --version
 
