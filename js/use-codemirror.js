@@ -2,11 +2,6 @@
 
 (function($){
 	var WSU_CSS = {
-		modes: {
-			'default': 'text/css',
-			'less': 'text/x-less',
-			'sass': 'text/x-scss'
-		},
 		ajaxSaveCSS: function(){
             jQuery("#message").remove();
             jQuery('<div id="message" class="updated fade"><p><strong><div class="customcsspreloader"></div> Saving...</strong></p></div>').insertBefore("form");
