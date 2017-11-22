@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.2 (November 22, 2017)
+
+* Add support for CSS Grid.
+
 ## 2.3.1 (April 17, 2017)
 
 * Bust cache on enqueued styles and scripts.
