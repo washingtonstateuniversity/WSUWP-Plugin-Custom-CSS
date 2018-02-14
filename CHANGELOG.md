@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.3 (February 14, 2018)
+
+* Add support for additional CSS grid properties.
+
 ## 2.3.2 (November 22, 2017)
 
 * Add support for CSS Grid.
