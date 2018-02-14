@@ -88,17 +88,23 @@ $GLOBALS['csstidy']['all_properties']['text-overflow'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['zoom'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['pointer-events'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['font-feature-settings'] = 'CSS3.0';
+
+/**
+ * CSS grid properties.
+ */
 $GLOBALS['csstidy']['all_properties']['grid'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-area'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-auto-columns'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-auto-flow'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-auto-rows'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-column'] = 'CSS3.0';
+$GLOBALS['csstidy']['all_properties']['grid-columns'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-column-end'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-column-gap'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-column-start'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-gap'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-row'] = 'CSS3.0';
+$GLOBALS['csstidy']['all_properties']['grid-rows'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-row-end'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-row-gap'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-row-start'] = 'CSS3.0';
@@ -106,3 +112,5 @@ $GLOBALS['csstidy']['all_properties']['grid-template'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-template-areas'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-template-columns'] = 'CSS3.0';
 $GLOBALS['csstidy']['all_properties']['grid-template-rows'] = 'CSS3.0';
+$GLOBALS['csstidy']['all_properties']['justify-self'] = 'CSS3.0';
+$GLOBALS['csstidy']['all_properties']['justify-items'] = 'CSS3.0';
