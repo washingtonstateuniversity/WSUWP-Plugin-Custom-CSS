@@ -1023,7 +1023,11 @@ class csstidy {
 			return $media;
 		}
 		end($this->css);
-		list($at,) = each($this->css);
+
+		$at = key( $this->css );
+
+		$next_array = next( $this->css );
+
 		if ($at == $media){
 			return $media;
 		}
@@ -1062,7 +1066,11 @@ class csstidy {
 
 			// if last is the same, keep it
 			end($this->css[$media]);
-			list($sel,) = each($this->css[$media]);
+
+			$sel = key( $this->css[$media] );
+
+			$next_array = next( $this->css[$media] );
+
 			if ($sel == $selector){
 				return $selector;
 			}
