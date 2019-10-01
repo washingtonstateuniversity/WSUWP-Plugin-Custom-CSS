@@ -4,7 +4,7 @@ Plugin Name: WSU Custom CSS
 Plugin URI: https://web.wsu.edu/
 Description: Custom CSS via custom post type.
 Author: washingtonstateuniversity, jeremyfelt, automattic
-Version: 2.3.3
+Version: 2.3.4
 */
 
 /**
