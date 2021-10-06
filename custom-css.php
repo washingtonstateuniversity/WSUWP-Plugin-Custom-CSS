@@ -565,6 +565,8 @@ class WSU_Custom_CSS {
 		// until we can rewrite to handle more than the Spine theme.
 		if ( 'spine' === $current_theme->template ) {
 			wp_enqueue_style( 'spine-custom-css', $href, array(), spine_get_script_version() );
+		} elseif ( 'wsuwp-theme-wds' === $current_theme->template ){
+			wp_enqueue_style( 'wsu-custom-css', $href, array(), '0.0.1' );
 		} else {
 			?>
 			<link rel="stylesheet" id="custom-css-css" type="text/css" href="<?php echo esc_url( $href ); ?>" />
