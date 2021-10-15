@@ -4,7 +4,7 @@ Plugin Name: WSU Custom CSS
 Plugin URI: https://web.wsu.edu/
 Description: Custom CSS via custom post type.
 Author: washingtonstateuniversity, jeremyfelt, automattic
-Version: 2.4.0
+Version: 2.4.1
 */
 
 /**
@@ -62,7 +62,7 @@ class WSU_Custom_CSS {
 
 		$current_theme = wp_get_theme();
 
-		if ( 'spine' === $current_theme->template ) {
+		if ( 'spine' === $current_theme->template || 'wswwp-theme-wds' === $current_theme->template ) {
 			add_action( 'spine_enqueue_styles', array( 'WSU_Custom_CSS', 'link_tag' ), 10 );
 		} else {
 			add_action( 'wp_head', array( 'WSU_Custom_CSS', 'link_tag' ), 101 );
@@ -494,6 +494,8 @@ class WSU_Custom_CSS {
 	static function link_tag() {
 		global $blog_id, $current_blog;
 
+		$current_theme = wp_get_theme();
+
 		if ( apply_filters( 'safecss_style_error', false ) ) {
 			return;
 		}
@@ -502,7 +504,7 @@ class WSU_Custom_CSS {
 			return;
 		}
 
-		if ( WSU_Custom_CSS::is_customizer_preview() ) {
+		if ( WSU_Custom_CSS::is_customizer_preview() && 'wsuwp-theme-wds' !== $current_theme->template ) {
 			return;
 		}
 
@@ -558,8 +560,6 @@ class WSU_Custom_CSS {
 		if ( WSU_Custom_CSS::is_preview() ) {
 			$href = add_query_arg( 'csspreview', 'true', $href );
 		}
-
-		$current_theme = wp_get_theme();
 
 		// We plan on the style being enqueued in the Spine parent theme. This should be considered temporary
 		// until we can rewrite to handle more than the Spine theme.
