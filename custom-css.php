@@ -4,7 +4,7 @@ Plugin Name: WSU Custom CSS
 Plugin URI: https://web.wsu.edu/
 Description: Custom CSS via custom post type.
 Author: washingtonstateuniversity, jeremyfelt, automattic
-Version: 2.4.1
+Version: 3.0.0
 */
 
 /**
@@ -261,10 +261,13 @@ class WSU_Custom_CSS {
 	 * @return array
 	 */
 	static function get_post() {
-		$custom_css_post_id = WSU_Custom_CSS::post_id();
 
-		if ( $custom_css_post_id ) {
-			return get_post( $custom_css_post_id, ARRAY_A );
+		$custom_css_post = WSU_Custom_CSS::post_id( true );
+
+		if ( is_array( $custom_css_post ) ) {
+
+			return $custom_css_post;
+
 		}
 
 		return array();
@@ -277,33 +280,53 @@ class WSU_Custom_CSS {
 	 *
 	 * @return int|bool The post ID if it exists; false otherwise.
 	 */
-	static function post_id() {
-		$custom_css_post_id = wp_cache_get( 'custom_css_post_id' );
+	static function post_id( $return_post = false ) {
 
-		if ( false === $custom_css_post_id ) {
-			$custom_css_posts = get_posts( array(
-				'posts_per_page' => 1,
-				'post_type' => 'safecss',
-				'post_status' => 'publish',
-				'orderby' => 'date',
-				'order' => 'DESC'
-			) );
+		$custom_css_post_id   = wp_cache_get( 'custom_css_post_id' );
+		$custom_css_post_type = wp_cache_get( 'custom_css_post_type' );
+		$custom_css_post      = wp_cache_get( 'custom_css_post' );
 
-			if ( count( $custom_css_posts ) > 0 ) {
-				$custom_css_post_id = $custom_css_posts[0]->ID;
-			} else {
-				// Save post_id=0 to note that no post exists.
-				$custom_css_post_id = 0;
+		if ( empty( $custom_css_post ) || empty( $custom_css_post_id ) || 'safecss' !== $custom_css_post_type ) {
+
+			// The Query.
+			$css_query = new WP_Query(
+				array(
+					'posts_per_page' => 1,
+					'post_type' => 'safecss',
+					'post_status' => 'publish',
+					'orderby' => 'date',
+					'order' => 'DESC',
+				)
+			);
+
+			// The Loop.
+			if ( $css_query->have_posts() ) {
+
+				while ( $css_query->have_posts() ) {
+
+					$css_query->the_post();
+
+					$custom_css_post_id = get_the_ID();
+
+					$custom_css_post = get_post( null, ARRAY_A );
+
+					wp_cache_set( 'custom_css_post_id', $custom_css_post_id );
+
+					wp_cache_set( 'custom_css_post_type', get_post_type() );
+
+					wp_cache_set( 'custom_css_post', $custom_css_post );
+				}
 			}
+			// Restore original Post Data.
+			wp_reset_postdata();
 
-			wp_cache_set( 'custom_css_post_id', $custom_css_post_id );
 		}
 
-		if ( 0 === $custom_css_post_id ) {
+		if ( empty( $custom_css_post_id ) ) {
 			return false;
 		}
 
-		return $custom_css_post_id;
+		return ( $return_post ) ? $custom_css_post : $custom_css_post_id;
 	}
 
 	/**
